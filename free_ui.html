@@ -736,22 +736,26 @@
                         </div>
                     </div>
 
-                    <div class="setting-label locked">Advanced Search</div>
-                    <div class="tooltip">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="setting-label locked">Advanced Search</div>
+                        <div class="pro-badge">Pro</div>
+                    </div>
+                    <div>
                         <div style="display: flex; align-items: center; gap: 15px;">
                             <div class="toggle-switch locked" style="pointer-events: none;"></div>
                             <div class="section-description" style="margin: 0; color: #9ca3af;">Search by alt text, filename, caption, or description with match type options</div>
                         </div>
-                        <span class="tooltiptext">Upgrade to Pro to unlock advanced search features including exact match, partial match, and field-specific searching</span>
                     </div>
 
-                    <div class="setting-label locked">Multi-Select Filters</div>
-                    <div class="tooltip">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="setting-label locked">Multi-Select Filters</div>
+                        <div class="pro-badge">Pro</div>
+                    </div>
+                    <div>
                         <div style="display: flex; align-items: center; gap: 15px;">
                             <div class="toggle-switch locked" style="pointer-events: none;"></div>
                             <div class="section-description" style="margin: 0; color: #9ca3af;">Use multiple filters at the same time</div>
                         </div>
-                        <span class="tooltiptext">Upgrade to Pro to enable multiple selections from dropdown filters for advanced filtering capabilities</span>
                     </div>
                 </div>
             </div>
@@ -780,14 +784,17 @@
             </div>
 
             <div class="module-section">
-                <h3 class="section-title" style="margin-bottom: 20px;">Quick Edit on Upload</h3>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                    <h3 class="section-title" style="margin: 0;">Quick Edit on Upload</h3>
+                    <div class="pro-badge">Pro</div>
+                </div>
 
                 <div class="settings-grid">
-                    <div class="setting-label">Enable Quick Edit on Upload</div>
+                    <div class="setting-label locked">Enable Quick Edit on Upload</div>
                     <div>
                         <div style="display: flex; align-items: center; gap: 15px;">
-                            <div class="toggle-switch enabled" onclick="toggleSection(this)"></div>
-                            <div class="section-description" style="margin: 0;">Show metadata editing fields when uploading media files.
+                            <div class="toggle-switch locked" style="pointer-events: none;"></div>
+                            <div class="section-description" style="margin: 0; color: #9ca3af;">Show metadata editing fields when uploading media files.
                                 <a href="https://docs.themeisle.com/article/2335-bulk-quick-edit" target="_blank" class="learn-more-link">Learn more →</a>
                             </div>
                         </div>
@@ -847,17 +854,17 @@
                 <div style="opacity: 0.6;">
                     <div class="settings-grid">
                         <div class="setting-label locked">Authorization Code</div>
-                        <input type="text" class="setting-input locked" placeholder="Upgrade to Pro" disabled>
+                        <input type="text" class="setting-input locked" placeholder="Enter authorization code" disabled>
 
                         <div class="setting-label locked">Confidence Level</div>
                         <div>
-                            <input type="number" class="setting-input locked" placeholder="Upgrade to Pro" disabled>
+                            <input type="number" class="setting-input locked" value="60" disabled>
                             <div class="section-description" style="margin-top: 5px; color: #9ca3af;">Higher confidence levels produce more accurate categories but fewer results.</div>
                         </div>
 
                         <div class="setting-label locked">Add New Categories To</div>
                         <select class="setting-select locked" disabled>
-                            <option>Upgrade to Pro</option>
+                            <option>Media Folders</option>
                         </select>
                     </div>
                 </div>
@@ -884,24 +891,24 @@
                     <div class="settings-grid">
                         <div class="setting-label locked">AI Service Provider</div>
                         <select class="setting-select locked" disabled>
-                            <option value="upgrade">Upgrade to Pro</option>
+                            <option value="openai">OpenAI GPT-4 Vision</option>
                         </select>
 
                         <div class="setting-label locked">API Key</div>
-                        <input type="password" class="setting-input locked" placeholder="Upgrade to Pro" disabled>
+                        <input type="password" class="setting-input locked" placeholder="Enter your API key" disabled>
 
                         <div class="setting-label locked">Default Language</div>
                         <select class="setting-select locked" disabled>
-                            <option value="upgrade">Upgrade to Pro</option>
+                            <option value="en">English</option>
                         </select>
 
                         <div class="setting-label locked">Generation Tone</div>
                         <select class="setting-select locked" disabled>
-                            <option value="upgrade">Upgrade to Pro</option>
+                            <option value="descriptive">Purely Descriptive (Accessibility)</option>
                         </select>
 
                         <div class="setting-label locked">Character Limit</div>
-                        <input type="number" class="setting-input locked" placeholder="Upgrade to Pro" disabled>
+                        <input type="number" class="setting-input locked" value="125" disabled>
                     </div>
                 </div>
             </div>
@@ -1113,7 +1120,7 @@
                                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; opacity: 0.6;">
                                             <div class="setting-label locked" style="min-width: 200px;">Apply Strategy</div>
                                             <select class="setting-select locked" disabled>
-                                                <option>Upgrade to Pro</option>
+                                                <option>All rules must pass</option>
                                             </select>
                                         </div>
                                         <div style="opacity: 0.6;">
@@ -1124,8 +1131,8 @@
                                                     <div>Value(s)</div>
                                                 </div>
                                                 <div class="rules-matrix-rows">
-                                                    <div class="rules-matrix-row"><div>Alt Text</div><div><select class="setting-select locked" disabled><option>Upgrade to Pro</option></select></div><div><input type="text" class="setting-input locked" placeholder="Upgrade to Pro" disabled></div></div>
-                                                    <div class="rules-matrix-row"><div>Title</div><div><select class="setting-select locked" disabled><option>Upgrade to Pro</option></select></div><div><input type="text" class="setting-input locked" placeholder="Upgrade to Pro" disabled></div></div>
+                                                    <div class="rules-matrix-row"><div>Alt Text</div><div><select class="setting-select locked" disabled><option>Contains</option></select></div><div><input type="text" class="setting-input locked" placeholder="Enter value" disabled></div></div>
+                                                    <div class="rules-matrix-row"><div>Title</div><div><select class="setting-select locked" disabled><option>Equals</option></select></div><div><input type="text" class="setting-input locked" placeholder="Enter value" disabled></div></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -1271,7 +1278,7 @@
             <div style="margin-top: 40px;">
                 <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
                     <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4c6fff 0%, #6366f1 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                        <img src="https://ps.w.org/optimole-wp/assets/icon-128x128.gif?rev=3013666" alt="Optimole" style="width: 40px; height: 40px;">
+                        <img src="assets/optimole-logo-128x128.png" alt="Optimole" style="width: 40px; height: 40px;">
                     </div>
                     <div>
                         <h3 style="margin: 0; font-size: 22px; font-weight: 600; color: #1e1e1e;">Speed up your website with smart image optimization</h3>
