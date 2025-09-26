@@ -27,7 +27,41 @@ function switchTab(tabName) {
 
     currentTab = tabName;
 }
-
+function startBulkGeneration() {
+            try {
+                const progressBar = document.getElementById('progressBar');
+                const progressFill = document.getElementById('progressFill');
+                const statusMessage = document.getElementById('statusMessage');
+                
+                if (progressBar && progressFill && statusMessage) {
+                    progressBar.style.display = 'block';
+                    statusMessage.style.display = 'block';
+                    statusMessage.textContent = 'Initializing AI analysis...';
+                    
+                    let progress = 0;
+                    const interval = setInterval(() => {
+                        progress += Math.random() * 15;
+                        if (progress > 100) progress = 100;
+                        
+                        progressFill.style.width = progress + '%';
+                        
+                        if (progress < 30) {
+                            statusMessage.textContent = 'Analyzing images with AI...';
+                        } else if (progress < 70) {
+                            statusMessage.textContent = 'Generating alt text and captions...';
+                        } else if (progress < 100) {
+                            statusMessage.textContent = 'Applying metadata to media library...';
+                        } else {
+                            statusMessage.textContent = 'Generation complete! Alt text added to all selected images.';
+                            clearInterval(interval);
+                        }
+                    }, 200);
+                }
+            } catch (error) {
+                showSuccessMessage('Bulk generation feature not available in current view');
+            }
+        }
+        
 function toggleSection(toggle) {
     toggle.classList.toggle('enabled');
 

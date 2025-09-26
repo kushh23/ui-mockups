@@ -889,26 +889,127 @@
 
                 <div style="opacity: 0.6;">
                     <div class="settings-grid">
-                        <div class="setting-label locked">AI Service Provider</div>
+                        <div class="setting-label locked" disabled>OpenAI Model</div>
                         <select class="setting-select locked" disabled>
-                            <option value="openai">OpenAI GPT-4 Vision</option>
+                            <option value="gpt-4o">GPT-4o</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="gpt-4-vision-preview">GPT-4 Vision Preview</option>
                         </select>
+ 
+                        <div class="setting-label locked" disabled>API Key</div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="password" class="setting-input" placeholder="Enter your OpenAI API key" style="flex: 1;" id="openaiApiKey" disabled>
+                                <button class="btn btn-secondary locked" onclick="testApiConnection()" id="connectBtn" style="white-space: nowrap;">
+                                    Connect
+                                </button>
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <div id="apiStatusDot" style="width: 8px; height: 8px; background: #d63638; border-radius: 50%;"></div>
+                                    <span id="apiStatusText" style="font-size: 12px; color: #d63638;">Not connected</span>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div class="setting-label locked">API Key</div>
-                        <input type="password" class="setting-input locked" placeholder="Enter your API key" disabled>
-
-                        <div class="setting-label locked">Default Language</div>
+                        <div class="setting-label locked" disabled>Generate Metadata</div>
+                        <div>
+                            <select class="setting-select locked" disabled>
+                                <option value="alt-text">Alt Text Only</option>
+                                <option value="both">Alt Text & Captions</option>
+                                <option value="captions">Captions Only</option>
+                            </select>
+                            <div class="section-description" style="margin-top: 5px;">Choose what type of metadata to generate for your images.</div>
+                        </div>
+ 
+                        <div class="setting-label locked" disabled>Default Language</div>
                         <select class="setting-select locked" disabled>
                             <option value="en">English</option>
+                            <option value="es">Spanish</option>
+                            <option value="fr">French</option>
+                            <option value="de">German</option>
                         </select>
+ 
+                        <div class="setting-label locked" disabled>Generation Tone</div>
+                        <div>
+                            <select class="setting-select locked" onchange="toggleCustomPrompt(this)" id="generationTone" disabled>
+                                <option value="descriptive">Descriptive (default)</option>
+                                <option value="detailed">Detailed</option>
+                                <option value="concise">Concise</option>
+                                <option value="custom">Custom Prompt</option>
+                            </select>
+                            
+                            <!-- Custom Prompt Field -->
+                            <div id="customPrompt" style="display: none; margin-top: 10px;">
+                                <textarea class="setting-input" rows="4" placeholder="Enter your custom prompt for AI generation..."></textarea>
+                                <div class="section-description" style="margin-top: 5px;">Define a custom prompt for the AI to follow when generating alt text and captions.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-label">Character Limit (Alt Text)</div>
+                        <div>
+                            <input type="number" class="setting-input locked" value="125" min="50" max="300" disabled>
+                            <div class="section-description" style="margin-top: 5px;">Maximum character limit for generated alt text only. Captions have no character limit.</div>
+                        </div>
+                        
+                        <div class="setting-label">Generate on upload</div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div class="toggle-switch locked" onclick="toggleSection(this)"></div>
+                                <div class="section-description" style="margin: 0;">When enabled, the metadata will be generated automatically on every image upload.</div>
+                            </div>
+                        </div>
+                    </div>
 
-                        <div class="setting-label locked">Generation Tone</div>
-                        <select class="setting-select locked" disabled>
-                            <option value="descriptive">Purely Descriptive (Accessibility)</option>
-                        </select>
-
-                        <div class="setting-label locked">Character Limit</div>
-                        <input type="number" class="setting-input locked" value="125" disabled>
+                    <!-- Bulk Metadata Generation -->
+                    <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border: 1px solid #ccd0d4; border-radius: 4px;">
+                        <h4 style="margin: 0 0 20px 0; font-size: 16px; font-weight: 600; color: #1e1e1e;">Bulk Metadata Generation</h4>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div class="setting-label" style="margin-bottom: 10px;">Bulk generate:</div>
+                            <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" checked style="margin: 0;" id="bulkGenerateAlt" disabled>
+                                    <span>Alt Text</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" style="margin: 0;" id="bulkGenerateCaptions" disabled>
+                                    <span>Captions</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <div class="setting-label" style="margin-bottom: 10px;">Processing Options:</div>
+                            <div style="display: flex; flex-direction: column; gap: 8px;">
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" checked style="margin: 0;" id="onlyMissingMetadata" disabled>
+                                    <span>Only generate missing metadata</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" style="margin: 0;" id="skipUnattached" disabled>
+                                    <span>Skip unattached images</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer;">
+                                    <input type="checkbox" checked style="margin: 0;" id="skipProcessed" disabled>
+                                    <span>Skip images that have already been processed</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                            <button class="btn btn-primary locked" onclick="startBulkGeneration()" style="padding: 10px 20px;" disabled>
+                                <span>✨</span>
+                                Generate Metadata
+                            </button>
+                            <span id="imageCount" style="font-size: 14px; color: #646970;">207 images found</span>
+                        </div>
+                        
+                        <div id="progressBar" style="display: none; margin-top: 15px;">
+                            <div style="background: #e5e7eb; border-radius: 4px; overflow: hidden; height: 8px;">
+                                <div id="progressFill" style="background: #0073aa; height: 100%; width: 0%; transition: width 0.3s ease;"></div>
+                            </div>
+                            <div id="statusMessage" style="margin-top: 8px; font-size: 12px; color: #646970;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
