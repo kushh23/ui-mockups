@@ -62,6 +62,7 @@
     .split-btn {
       display: inline-flex;
       align-items: stretch;
+      position: relative;
     }
     .split-btn-main {
       background: #2271b1;
@@ -85,7 +86,7 @@
       border: 1px solid #2271b1;
       border-left: none;
       color: #fff;
-      padding: 0 8px;
+      padding: 0 10px;
       height: 32px;
       border-radius: 0 3px 3px 0;
       cursor: pointer;
@@ -97,6 +98,10 @@
     }
     
     /* Dropdown Button */
+    .dropdown-wrapper {
+      position: relative;
+      display: inline-block;
+    }
     .dropdown-btn {
       background: #2271b1;
       border: 1px solid #2271b1;
@@ -113,6 +118,56 @@
     .dropdown-btn:hover {
       background: #135e96;
     }
+    
+    /* Dropdown Menu */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background: #fff;
+      border: 1px solid #c3c4c7;
+      border-radius: 4px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      min-width: 180px;
+      z-index: 100;
+      padding: 6px 0;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+    .dropdown-menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      color: #1d2327;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .dropdown-menu a:hover {
+      background: #f0f0f1;
+      color: #2271b1;
+    }
+    .dropdown-menu .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .icon-php { background: #777BB3; }
+    .icon-css { background: #264DE4; }
+    .icon-js { background: #F7DF1E; color: #000 !important; }
+    .icon-text { background: #646970; }
+    .icon-html { background: #E34F26; }
+    .icon-ad { background: #00A67E; }
+    .icon-universal { background: #9B59B6; }
     
     /* Filters row */
     .filters {
@@ -156,6 +211,94 @@
       transform: rotate(135deg);
       margin-top: -2px;
     }
+    
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 420px;
+      max-width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #646970;
+      padding: 0;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #1d2327;
+    }
+    .modal-body {
+      padding: 12px;
+    }
+    .snippet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .snippet-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      color: #1d2327;
+      transition: all 0.15s ease;
+    }
+    .snippet-option:hover {
+      border-color: #2271b1;
+      background: #f7fbfd;
+    }
+    .snippet-option .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .snippet-option span {
+      font-size: 13px;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body>
@@ -169,9 +312,18 @@
         <button class="split-btn-main">
           <span>+</span> Add PHP Snippet
         </button>
-        <button class="split-btn-dropdown">
+        <button class="split-btn-dropdown" onclick="toggleDropdown('dropdown1')">
           <span class="chevron"></span>
         </button>
+        <div class="dropdown-menu" id="dropdown1">
+          <a href="#"><span class="icon icon-php">PHP</span> PHP Snippet</a>
+          <a href="#"><span class="icon icon-css">CSS</span> CSS Snippet</a>
+          <a href="#"><span class="icon icon-js">JS</span> JS Snippet</a>
+          <a href="#"><span class="icon icon-text">TXT</span> Text Snippet</a>
+          <a href="#"><span class="icon icon-html">HTML</span> HTML Snippet</a>
+          <a href="#"><span class="icon icon-ad">AD</span> Advertisement</a>
+          <a href="#"><span class="icon icon-universal">UNI</span> Universal</a>
+        </div>
       </div>
     </div>
     <div class="filters">
@@ -188,9 +340,9 @@
     <div class="option-label">Option 2: Simple Button → Modal</div>
     <div class="header-row">
       <h1>Woody Snippets</h1>
-      <a href="#" class="btn-primary">
+      <button class="btn-primary" onclick="toggleModal(true)">
         <span>+</span> Add New
-      </a>
+      </button>
     </div>
     <div class="filters">
       <div class="subsubsub">
@@ -206,10 +358,21 @@
     <div class="option-label">Option 3: Dropdown with Embedded Action</div>
     <div class="header-row">
       <h1>Woody Snippets</h1>
-      <button class="dropdown-btn">
-        <span>+</span> New Snippet: PHP
-        <span class="chevron"></span>
-      </button>
+      <div class="dropdown-wrapper">
+        <button class="dropdown-btn" onclick="toggleDropdown('dropdown3')">
+          <span>+</span> New Snippet: PHP
+          <span class="chevron"></span>
+        </button>
+        <div class="dropdown-menu" id="dropdown3">
+          <a href="#"><span class="icon icon-php">PHP</span> PHP Snippet</a>
+          <a href="#"><span class="icon icon-css">CSS</span> CSS Snippet</a>
+          <a href="#"><span class="icon icon-js">JS</span> JS Snippet</a>
+          <a href="#"><span class="icon icon-text">TXT</span> Text Snippet</a>
+          <a href="#"><span class="icon icon-html">HTML</span> HTML Snippet</a>
+          <a href="#"><span class="icon icon-ad">AD</span> Advertisement</a>
+          <a href="#"><span class="icon icon-universal">UNI</span> Universal</a>
+        </div>
+      </div>
     </div>
     <div class="filters">
       <div class="subsubsub">
@@ -219,6 +382,68 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal for Option 2 -->
+  <div class="modal-overlay" id="modal" onclick="if(event.target === this) toggleModal(false)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Add New Snippet</h2>
+        <button class="modal-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="snippet-grid">
+          <a href="#" class="snippet-option">
+            <div class="icon icon-php">PHP</div>
+            <span>PHP Snippet</span>
+          </a>
+          <a href="#" class="snippet-option">
+            <div class="icon icon-css">CSS</div>
+            <span>CSS Snippet</span>
+          </a>
+          <a href="#" class="snippet-option">
+            <div class="icon icon-js">JS</div>
+            <span>JS Snippet</span>
+          </a>
+          <a href="#" class="snippet-option">
+            <div class="icon icon-text">TXT</div>
+            <span>Text Snippet</span>
+          </a>
+          <a href="#" class="snippet-option">
+            <div class="icon icon-html">HTML</div>
+            <span>HTML Snippet</span>
+          </a>
+          <a href="#" class="snippet-option">
+            <div class="icon icon-ad">AD</div>
+            <span>Advertisement</span>
+          </a>
+          <a href="#" class="snippet-option" style="grid-column: span 2;">
+            <div class="icon icon-universal">UNI</div>
+            <span>Universal Snippet</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDropdown(id) {
+      const allDropdowns = document.querySelectorAll('.dropdown-menu');
+      allDropdowns.forEach(d => {
+        if (d.id !== id) d.classList.remove('show');
+      });
+      document.getElementById(id).classList.toggle('show');
+    }
+    
+    function toggleModal(show) {
+      document.getElementById('modal').classList.toggle('show', show);
+    }
+    
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.split-btn') && !e.target.closest('.dropdown-wrapper')) {
+        document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.remove('show'));
+      }
+    });
+  </script>
 
 </body>
 </html>
