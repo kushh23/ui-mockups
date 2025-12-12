@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      background: #f0f0f1;
+      padding: 20px;
+      color: #1d2327;
+    }
+    .option-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #646970;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .header {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+      border: 1px solid #c3c4c7;
+    }
+    .header-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h1 {
+      font-size: 23px;
+      font-weight: 400;
+      margin: 0;
+      color: #1d2327;
+    }
+    
+    /* Primary Button */
+    .btn-primary {
+      background: #2271b1;
+      border: 1px solid #2271b1;
+      color: #fff;
+      padding: 0 12px;
+      height: 32px;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+    }
+    .btn-primary:hover {
+      background: #135e96;
+      border-color: #135e96;
+    }
+    
+    /* Split Button */
+    .split-btn {
+      display: inline-flex;
+      align-items: stretch;
+    }
+    .split-btn-main {
+      background: #2271b1;
+      border: 1px solid #2271b1;
+      border-right: 1px solid rgba(255,255,255,0.25);
+      color: #fff;
+      padding: 0 14px;
+      height: 32px;
+      border-radius: 3px 0 0 3px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .split-btn-main:hover {
+      background: #135e96;
+    }
+    .split-btn-dropdown {
+      background: #2271b1;
+      border: 1px solid #2271b1;
+      border-left: none;
+      color: #fff;
+      padding: 0 8px;
+      height: 32px;
+      border-radius: 0 3px 3px 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+    }
+    .split-btn-dropdown:hover {
+      background: #135e96;
+    }
+    
+    /* Dropdown Button */
+    .dropdown-btn {
+      background: #2271b1;
+      border: 1px solid #2271b1;
+      color: #fff;
+      padding: 0 12px;
+      height: 32px;
+      border-radius: 3px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dropdown-btn:hover {
+      background: #135e96;
+    }
+    
+    /* Filters row */
+    .filters {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid #f0f0f1;
+    }
+    .subsubsub {
+      display: flex;
+      gap: 4px;
+      font-size: 13px;
+      color: #646970;
+    }
+    .subsubsub a {
+      color: #2271b1;
+      text-decoration: none;
+    }
+    .subsubsub a:hover {
+      color: #135e96;
+    }
+    .subsubsub .current {
+      font-weight: 600;
+      color: #1d2327;
+    }
+    .subsubsub .separator {
+      color: #c3c4c7;
+    }
+    .count {
+      color: #646970;
+      font-weight: 400;
+    }
+
+    /* Chevron */
+    .chevron {
+      border-style: solid;
+      border-width: 0.1em 0.1em 0 0;
+      content: '';
+      display: inline-block;
+      height: 0.35em;
+      width: 0.35em;
+      transform: rotate(135deg);
+      margin-top: -2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Option 1: Split Button -->
+  <div class="header">
+    <div class="option-label">Option 1: Split Button</div>
+    <div class="header-row">
+      <h1>Woody Snippets</h1>
+      <div class="split-btn">
+        <button class="split-btn-main">
+          <span>+</span> Add PHP Snippet
+        </button>
+        <button class="split-btn-dropdown">
+          <span class="chevron"></span>
+        </button>
+      </div>
+    </div>
+    <div class="filters">
+      <div class="subsubsub">
+        <a href="#" class="current">All <span class="count">(4)</span></a>
+        <span class="separator">|</span>
+        <a href="#">Published <span class="count">(4)</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 2: Simple Primary Button -->
+  <div class="header">
+    <div class="option-label">Option 2: Simple Button → Modal</div>
+    <div class="header-row">
+      <h1>Woody Snippets</h1>
+      <a href="#" class="btn-primary">
+        <span>+</span> Add New
+      </a>
+    </div>
+    <div class="filters">
+      <div class="subsubsub">
+        <a href="#" class="current">All <span class="count">(4)</span></a>
+        <span class="separator">|</span>
+        <a href="#">Published <span class="count">(4)</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option 3: Dropdown with Action -->
+  <div class="header">
+    <div class="option-label">Option 3: Dropdown with Embedded Action</div>
+    <div class="header-row">
+      <h1>Woody Snippets</h1>
+      <button class="dropdown-btn">
+        <span>+</span> New Snippet: PHP
+        <span class="chevron"></span>
+      </button>
+    </div>
+    <div class="filters">
+      <div class="subsubsub">
+        <a href="#" class="current">All <span class="count">(4)</span></a>
+        <span class="separator">|</span>
+        <a href="#">Published <span class="count">(4)</span></a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
