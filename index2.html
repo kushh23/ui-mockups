@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      color: #1d2327;
+      background: #f0f0f1;
+      padding: 20px;
+      margin: 0;
+    }
+    h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 10px 0;
+      color: #1d2327;
+    }
+    .description {
+      color: #646970;
+      margin-bottom: 15px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .mockup-section {
+      background: #fff;
+      border: 1px solid #c3c4c7;
+      margin-bottom: 40px;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+    th {
+      text-align: left;
+      padding: 10px 10px;
+      border-bottom: 1px solid #c3c4c7;
+      font-weight: 400;
+      color: #2c3338;
+      font-size: 13px;
+    }
+    td {
+      padding: 10px 10px;
+      border-bottom: 1px solid #f0f0f1;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .snippet-title {
+      color: #2271b1;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .snippet-title:hover {
+      color: #135e96;
+    }
+    .row-actions {
+      color: #787c82;
+      font-size: 12px;
+      margin-top: 5px;
+      visibility: hidden;
+    }
+    tr:hover .row-actions {
+      visibility: visible;
+    }
+    tr.test-active .row-actions {
+      visibility: visible;
+    }
+    .row-actions a {
+      color: #2271b1;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .row-actions a:hover {
+      color: #135e96;
+    }
+    .row-actions .test-action-active {
+      color: #dba617;
+      font-weight: 500;
+    }
+    .row-actions span {
+      color: #787c82;
+    }
+    .snippet-desc {
+      color: #50575e;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .tags a {
+      color: #2271b1;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .tags a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Toggle switch */
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 18px;
+      background: #ccc;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle.active {
+      background: #2271b1;
+    }
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+    }
+    .toggle.active::after {
+      left: 20px;
+    }
+    
+    /* Test badge */
+    .test-badge {
+      display: none;
+      background: #dba617;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    tr.test-active .test-badge {
+      display: inline-block;
+    }
+    
+    /* Test active row */
+    tr.test-active {
+      background: #fffbeb;
+    }
+    
+    /* Option 2: Icon next to toggle */
+    .status-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .test-icon {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+    .test-icon:hover {
+      opacity: 0.6;
+    }
+    .test-icon.active {
+      opacity: 1;
+    }
+    .test-icon svg {
+      fill: #dba617;
+    }
+    
+    /* Option 5: Bulk actions */
+    .bulk-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      align-items: center;
+    }
+    .bulk-select {
+      padding: 5px 10px;
+      border: 1px solid #8c8f94;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+    .bulk-btn {
+      padding: 5px 14px;
+      background: #f6f7f7;
+      border: 1px solid #8c8f94;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .bulk-btn:hover {
+      background: #f0f0f1;
+    }
+    
+    .type-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .type-php { background: #ddd; color: #1d2327; }
+    .type-uni { background: #2271b1; color: #fff; }
+    .type-text { background: #00a32a; color: #fff; }
+    
+    .priority-input {
+      width: 50px;
+      padding: 4px 8px;
+      border: 1px solid #8c8f94;
+      border-radius: 3px;
+      text-align: center;
+    }
+    
+    /* Filter bar */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #c3c4c7;
+    }
+    .filter-bar a {
+      color: #2271b1;
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .filter-bar .current {
+      font-weight: 600;
+      color: #1d2327;
+    }
+    .filter-bar .sep {
+      color: #c3c4c7;
+    }
+    .filter-bar .count {
+      color: #50575e;
+    }
+    .filter-bar .testing-tab {
+      color: #dba617;
+      font-weight: 500;
+    }
+    
+    /* Admin notice banner */
+    .admin-notice {
+      background: #fff8e5;
+      border-left: 4px solid #dba617;
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-notice.visible {
+      display: flex;
+    }
+    .admin-notice a {
+      color: #2271b1;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .admin-notice a:hover {
+      text-decoration: underline;
+    }
+    .admin-notice .disable-all {
+      font-size: 12px;
+    }
+    .testing-snippets-list {
+      color: #50575e;
+      margin-left: 8px;
+    }
+    .testing-snippets-list a {
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Option 1 -->
+<div class="mockup-section" id="option1">
+  <h2>Option 1: Row Action Link</h2>
+  <p class="description">Adds "Test Mode" to hover actions. Shows "TEST" badge next to title when active. Most WordPress-native approach with zero layout changes.</p>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px">☐</th>
+      <th style="width:50px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td>☐</td>
+      <td><div class="toggle"></div></td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Option 2 -->
+<div class="mockup-section" id="option2">
+  <h2>Option 2: Flask Icon Next to Toggle</h2>
+  <p class="description">Clickable flask/beaker icon beside status toggle. Grey when inactive, yellow when test mode is on. Quick visual indicator without needing hover.</p>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px">☐</th>
+      <th style="width:70px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td>☐</td>
+      <td>
+        <div class="status-cell">
+          <div class="toggle active"></div>
+          <div class="test-icon test-toggle" title="Enable test mode">
+            <svg viewBox="0 0 24 24"><path d="M7 2v2h1v6.172l-2.414 2.414A2 2 0 0 0 5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a2 2 0 0 0-.586-1.414L16 10.172V4h1V2H7zm3 2h4v7l3 3v5H7v-5l3-3V4z"/></svg>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td>☐</td>
+      <td>
+        <div class="status-cell">
+          <div class="toggle active"></div>
+          <div class="test-icon test-toggle" title="Enable test mode">
+            <svg viewBox="0 0 24 24"><path d="M7 2v2h1v6.172l-2.414 2.414A2 2 0 0 0 5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a2 2 0 0 0-.586-1.414L16 10.172V4h1V2H7zm3 2h4v7l3 3v5H7v-5l3-3V4z"/></svg>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td>☐</td>
+      <td>
+        <div class="status-cell">
+          <div class="toggle"></div>
+          <div class="test-icon test-toggle" title="Enable test mode">
+            <svg viewBox="0 0 24 24"><path d="M7 2v2h1v6.172l-2.414 2.414A2 2 0 0 0 5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a2 2 0 0 0-.586-1.414L16 10.172V4h1V2H7zm3 2h4v7l3 3v5H7v-5l3-3V4z"/></svg>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td>☐</td>
+      <td>
+        <div class="status-cell">
+          <div class="toggle active"></div>
+          <div class="test-icon test-toggle" title="Enable test mode">
+            <svg viewBox="0 0 24 24"><path d="M7 2v2h1v6.172l-2.414 2.414A2 2 0 0 0 5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5a2 2 0 0 0-.586-1.414L16 10.172V4h1V2H7zm3 2h4v7l3 3v5H7v-5l3-3V4z"/></svg>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Option 3: Filter Tab -->
+<div class="mockup-section" id="option3">
+  <h2>Option 3: Test Mode Filter Tab</h2>
+  <p class="description">Add "Testing" tab to filter bar showing all snippets currently in test mode. Easy to see all testing snippets at once. Combined with row action for enabling/disabling.</p>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a class="testing-tab">Testing <span class="count testing-count">(0)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px">☐</th>
+      <th style="width:50px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td>☐</td>
+      <td><div class="toggle"></div></td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Option 4: Admin Banner -->
+<div class="mockup-section" id="option4">
+  <h2>Option 4: Admin Notice Banner</h2>
+  <p class="description">When any snippet is in test mode, show a persistent warning banner at top of the list. Clicking snippet names in banner jumps to that row. Hard to miss, prevents forgotten test modes.</p>
+  
+  <div class="admin-notice">
+    <div>
+      <strong style="color:#1d2327">⚠️ Test Mode Active:</strong>
+      <span class="testing-snippets-list"></span>
+    </div>
+    <a class="disable-all">Disable All Test Modes</a>
+  </div>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px">☐</th>
+      <th style="width:50px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td>☐</td>
+      <td><div class="toggle"></div></td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Option 5: Bulk Actions -->
+<div class="mockup-section" id="option5">
+  <h2>Option 5: Bulk Actions Only</h2>
+  <p class="description">Test mode options added to bulk actions dropdown. No per-row UI changes needed, great for batch operations, but less discoverable for single snippets.</p>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <div class="bulk-actions">
+    <select class="bulk-select">
+      <option value="">Bulk actions</option>
+      <option value="activate">Activate</option>
+      <option value="deactivate">Deactivate</option>
+      <option disabled>─────────</option>
+      <option value="enable-test">Enable Test Mode</option>
+      <option value="disable-test">Disable Test Mode</option>
+      <option disabled>─────────</option>
+      <option value="trash">Move to Trash</option>
+    </select>
+    <button class="bulk-btn">Apply</button>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px"><input type="checkbox" class="select-all"></th>
+      <th style="width:50px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td><input type="checkbox" class="row-select"></td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td><input type="checkbox" class="row-select"></td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td><input type="checkbox" class="row-select"></td>
+      <td><div class="toggle"></div></td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td><input type="checkbox" class="row-select"></td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- Option 6: Combined -->
+<div class="mockup-section" id="option6">
+  <h2>Option 6: Combined (Row Actions + Filter Tab + Banner) ⭐ Recommended</h2>
+  <p class="description">Best of all worlds: Row actions for per-snippet control, Testing filter tab for overview, Admin banner for safety. Click on "Test Mode" links or use "Disable All" to see it in action.</p>
+  
+  <div class="admin-notice">
+    <div>
+      <strong style="color:#1d2327">⚠️ Test Mode Active:</strong>
+      <span class="testing-snippets-list"></span>
+    </div>
+    <a class="disable-all">Disable All Test Modes</a>
+  </div>
+  
+  <div class="filter-bar">
+    <a class="current">All <span class="count">(4)</span></a>
+    <span class="sep">|</span>
+    <a>Published <span class="count">(3)</span></a>
+    <span class="sep">|</span>
+    <a class="testing-tab">Testing <span class="count testing-count">(0)</span></a>
+    <span class="sep">|</span>
+    <a>Trash <span class="count">(2)</span></a>
+  </div>
+  
+  <table>
+    <tr>
+      <th style="width:30px">☐</th>
+      <th style="width:50px">Status</th>
+      <th style="width:25%">Snippet title</th>
+      <th style="width:30%">Description</th>
+      <th style="width:90px">Location</th>
+      <th>Tags</th>
+      <th style="width:60px">Priority</th>
+      <th style="width:60px">Type</th>
+    </tr>
+    <tr data-id="1">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Google Analytics tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Google analytics tracking code will be added to all pages before the &lt;/head&gt; tag.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>universal</a></td>
+      <td><input type="text" class="priority-input" value="10"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="2">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Facebook Pixel tracking</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Facebook Pixel code for conversion tracking and remarketing audiences.</td>
+      <td>Header</td>
+      <td class="tags"><a>tracking</a>, <a>facebook</a></td>
+      <td><input type="text" class="priority-input" value="20"></td>
+      <td><span class="type-badge type-uni">uni</span></td>
+    </tr>
+    <tr data-id="3">
+      <td>☐</td>
+      <td><div class="toggle"></div></td>
+      <td>
+        <span class="snippet-title">Disable emojis</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">Emojis are little icons used to express ideas or emotions. Disable them to make your site faster.</td>
+      <td>Run everywhere</td>
+      <td class="tags"><a>disable features</a>, <a>php</a></td>
+      <td><input type="text" class="priority-input" value="30"></td>
+      <td><span class="type-badge type-php">php</span></td>
+    </tr>
+    <tr data-id="4">
+      <td>☐</td>
+      <td><div class="toggle active"></div></td>
+      <td>
+        <span class="snippet-title">Simple text snippet: Lorem Ipsum</span><span class="test-badge">TEST</span>
+        <div class="row-actions">
+          <a>Edit</a> <span>|</span>
+          <a>Duplicate</a> <span>|</span>
+          <a class="test-toggle">Test Mode</a> <span>|</span>
+          <a style="color:#b32d2e">Trash</a>
+        </div>
+      </td>
+      <td class="snippet-desc">This ordinary maintenance text. With this snippet, you can fill your pages with meaningless English text.</td>
+      <td>Header</td>
+      <td class="tags"><a>lorem ipsum</a>, <a>text</a></td>
+      <td><input type="text" class="priority-input" value="40"></td>
+      <td><span class="type-badge type-text">text</span></td>
+    </tr>
+  </table>
+</div>
+
+<script>
+  // Initialize all sections
+  document.querySelectorAll('.mockup-section').forEach(section => {
+    initSection(section);
+    
+    // Set first snippet to test mode by default
+    const firstRow = section.querySelector('tr[data-id="1"]');
+    if (firstRow) {
+      firstRow.classList.add('test-active');
+      const toggle = firstRow.querySelector('a.test-toggle');
+      if (toggle) {
+        toggle.textContent = 'Disable Test';
+        toggle.classList.add('test-action-active');
+      }
+      const icon = firstRow.querySelector('.test-icon');
+      if (icon) {
+        icon.classList.add('active');
+      }
+    }
+  });
+
+  function initSection(section) {
+    const rows = section.querySelectorAll('tr[data-id]');
+    const adminNotice = section.querySelector('.admin-notice');
+    const testingCount = section.querySelector('.testing-count');
+    const testingList = section.querySelector('.testing-snippets-list');
+    const disableAllBtn = section.querySelector('.disable-all');
+
+    // Toggle test mode via row action link
+    section.querySelectorAll('.test-toggle').forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const row = toggle.closest('tr');
+        toggleTestMode(row);
+        updateUI();
+      });
+    });
+
+    // Toggle test mode via flask icon (Option 2)
+    section.querySelectorAll('.test-icon').forEach(icon => {
+      icon.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const row = icon.closest('tr');
+        row.classList.toggle('test-active');
+        icon.classList.toggle('active', row.classList.contains('test-active'));
+        updateUI();
+      });
+    });
+
+    // Disable all test modes
+    if (disableAllBtn) {
+      disableAllBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        rows.forEach(row => {
+          row.classList.remove('test-active');
+          const toggle = row.querySelector('.test-toggle');
+          if (toggle) {
+            toggle.textContent = 'Test Mode';
+            toggle.classList.remove('test-action-active');
+          }
+          const icon = row.querySelector('.test-icon');
+          if (icon) icon.classList.remove('active');
+        });
+        updateUI();
+      });
+    }
+
+    // Bulk actions (Option 5)
+    const bulkBtn = section.querySelector('.bulk-btn');
+    const bulkSelect = section.querySelector('.bulk-select');
+    const selectAll = section.querySelector('.select-all');
+
+    if (selectAll) {
+      selectAll.addEventListener('change', () => {
+        section.querySelectorAll('.row-select').forEach(cb => {
+          cb.checked = selectAll.checked;
+        });
+      });
+    }
+
+    if (bulkBtn && bulkSelect) {
+      bulkBtn.addEventListener('click', () => {
+        const action = bulkSelect.value;
+        const selectedRows = Array.from(section.querySelectorAll('.row-select:checked'))
+          .map(cb => cb.closest('tr'));
+        
+        if (action === 'enable-test') {
+          selectedRows.forEach(row => {
+            row.classList.add('test-active');
+          });
+        } else if (action === 'disable-test') {
+          selectedRows.forEach(row => {
+            row.classList.remove('test-active');
+          });
+        }
+        updateUI();
+      });
+    }
+
+    function toggleTestMode(row) {
+      row.classList.toggle('test-active');
+      const toggle = row.querySelector('a.test-toggle');
+      if (toggle) {
+        if (row.classList.contains('test-active')) {
+          toggle.textContent = 'Disable Test';
+          toggle.classList.add('test-action-active');
+        } else {
+          toggle.textContent = 'Test Mode';
+          toggle.classList.remove('test-action-active');
+        }
+      }
+    }
+
+    function updateUI() {
+      const activeRows = section.querySelectorAll('tr.test-active');
+      const count = activeRows.length;
+
+      // Update testing count in filter tab
+      if (testingCount) {
+        testingCount.textContent = `(${count})`;
+      }
+
+      // Update admin notice banner
+      if (adminNotice) {
+        if (count > 0) {
+          adminNotice.classList.add('visible');
+          const names = Array.from(activeRows).map(row => {
+            return row.querySelector('.snippet-title').textContent;
+          });
+          if (testingList) {
+            testingList.innerHTML = names.map(name => `<a>${name}</a>`).join(', ') + 
+              ` ${count === 1 ? 'is' : 'are'} only visible to logged-in admins.`;
+          }
+        } else {
+          adminNotice.classList.remove('visible');
+        }
+      }
+    }
+
+    // Initial UI update
+    updateUI();
+  }
+  
+  // Re-run updateUI for all sections after default test mode is set
+  document.querySelectorAll('.mockup-section').forEach(section => {
+    const adminNotice = section.querySelector('.admin-notice');
+    const testingCount = section.querySelector('.testing-count');
+    const testingList = section.querySelector('.testing-snippets-list');
+    const activeRows = section.querySelectorAll('tr.test-active');
+    const count = activeRows.length;
+
+    if (testingCount) {
+      testingCount.textContent = `(${count})`;
+    }
+
+    if (adminNotice) {
+      if (count > 0) {
+        adminNotice.classList.add('visible');
+        const names = Array.from(activeRows).map(row => {
+          return row.querySelector('.snippet-title').textContent;
+        });
+        if (testingList) {
+          testingList.innerHTML = names.map(name => `<a>${name}</a>`).join(', ') + 
+            ` ${count === 1 ? 'is' : 'are'} only visible to logged-in admins.`;
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
