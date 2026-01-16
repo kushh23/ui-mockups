@@ -1,0 +1,2528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Featured Image</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #8BC34A;
+      --primary-dark: #2D7373;
+      --primary-darker: #1F5C5C;
+      --primary-light: #A8D4D4;
+      --primary-lighter: #D4ECEC;
+      --primary-bg: #EDF7F7;
+      --accent: #1F2937;
+      --bg: #F8FAFC;
+      --sidebar-bg: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --text-primary: #1A1D21;
+      --text-secondary: #5F6368;
+      --text-muted: #9AA0A6;
+      --border: #E8EAED;
+      --border-light: #F1F3F4;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-xl: 16px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+      /* Tag colors */
+      --tag-green-bg: #ECFDF5;
+      --tag-green-text: #059669;
+      --tag-green-border: #A7F3D0;
+      --tag-blue-bg: #EFF6FF;
+      --tag-blue-text: #2563EB;
+      --tag-blue-border: #BFDBFE;
+      --tag-orange-bg: #FFF7ED;
+      --tag-orange-text: #EA580C;
+      --tag-orange-border: #FED7AA;
+      --tag-red-bg: #FEF2F2;
+      --tag-red-text: #DC2626;
+      --tag-red-border: #FECACA;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      font-size: 14px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    /* Sidebar - Clean text-based style */
+    .sidebar {
+      width: 220px;
+      background: var(--sidebar-bg);
+      min-height: 100vh;
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 0 20px 24px;
+    }
+
+    .sidebar-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .sidebar-version {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .sidebar nav {
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text-primary);
+      transition: var(--transition);
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--border-light);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(90deg, var(--primary-bg) 0%, transparent 100%);
+      border-left-color: var(--primary);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      color: var(--text-muted);
+      width: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--primary);
+    }
+
+    .nav-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .nav-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      padding: 28px 32px;
+      max-width: calc(100% - 220px);
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumb span {
+      color: var(--text-secondary);
+    }
+
+    /* Quick Actions Cards */
+    .quick-actions {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .action-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .action-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border);
+    }
+
+    .action-card.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      flex: 1;
+      max-width: 360px;
+    }
+
+    .action-card.primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+
+    .action-card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .action-card:not(.primary) .action-card-icon {
+      background: var(--border-light);
+      color: var(--accent);
+    }
+
+    .action-card-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 2px;
+    }
+
+    .action-card:not(.primary) .action-card-content h3 {
+      color: var(--accent);
+    }
+
+    .action-card-content p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .action-card:not(.primary) .action-card-content p {
+      color: var(--text-muted);
+    }
+
+    /* Recent Activity */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+
+    .activity-thumb {
+      width: 48px;
+      height: 48px;
+      background: var(--border-light);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 20px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .activity-info {
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .activity-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .activity-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid;
+    }
+
+    .tag-green {
+      background: var(--tag-green-bg);
+      color: var(--tag-green-text);
+      border-color: var(--tag-green-border);
+    }
+
+    .tag-blue {
+      background: var(--tag-blue-bg);
+      color: var(--tag-blue-text);
+      border-color: var(--tag-blue-border);
+    }
+
+    .tag-orange {
+      background: var(--tag-orange-bg);
+      color: var(--tag-orange-text);
+      border-color: var(--tag-orange-border);
+    }
+
+    .tag-red {
+      background: var(--tag-red-bg);
+      color: var(--tag-red-text);
+      border-color: var(--tag-red-border);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 2px 4px rgba(31, 41, 55, 0.2);
+    }
+
+    .btn-primary:hover {
+      background: #374151;
+      box-shadow: 0 4px 8px rgba(31, 41, 55, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--border-light);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-danger {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
+    .btn-danger:hover {
+      background: #FEE2E2;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 12px;
+    }
+
+    .btn-ghost:hover {
+      background: var(--border-light);
+      color: var(--text-primary);
+    }
+
+    /* Pro Badge */
+    .pro-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      background: #8BC34A;
+      color: white;
+      border-radius: 4px;
+      margin-left: 8px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 1px 3px rgba(139, 195, 74, 0.3);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Form Elements */
+    .input,
+    .select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      width: 100%;
+      font-family: inherit;
+      transition: var(--transition);
+      background: var(--card-bg);
+      color: var(--text-primary);
+    }
+
+    .select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239AA0A6' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 40px;
+    }
+
+    .input:focus,
+    .select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.15);
+    }
+
+    .input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      background: var(--border-light);
+    }
+
+    .tab {
+      padding: 14px 20px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: var(--transition);
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab:hover {
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .tab.active {
+      color: var(--primary-darker);
+      border-bottom-color: var(--primary);
+      background: var(--card-bg);
+    }
+
+    /* Grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Settings */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-label {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .setting-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Toggle Switch */
+    .toggle {
+      width: 44px;
+      height: 24px;
+      background: var(--border);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+
+    .toggle.on {
+      background: var(--primary);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: var(--transition);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .toggle.on::after {
+      left: 22px;
+    }
+
+    .toggle:hover {
+      box-shadow: 0 0 0 3px rgba(61, 139, 139, 0.15);
+    }
+
+    /* Pro Locked Section - Simple Green Style */
+    .pro-locked-section {
+      position: relative;
+      border: 2px solid #E0E0E0;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: #F8F8F8;
+    }
+
+    .pro-locked-header {
+      background: #FFFFFF;
+      color: var(--text-primary);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    .pro-locked-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pro-locked-header-icon {
+      width: 32px;
+      height: 32px;
+      background: #8BC34A;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: white;
+    }
+
+    .pro-locked-header-text h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .pro-locked-header-text p {
+      font-size: 12px;
+      margin: 2px 0 0 0;
+      color: var(--text-muted);
+    }
+
+    .pro-locked-header .btn-unlock {
+      background: #8BC34A;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pro-locked-header .btn-unlock:hover {
+      background: #7CB342;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(139, 195, 74, 0.3);
+    }
+
+    .pro-locked-content {
+      padding: 20px;
+      position: relative;
+    }
+
+    .pro-locked-content>* {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* Lock Overlay - for smaller inline items */
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(248, 248, 248, 0.95);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      z-index: 10;
+      transition: var(--transition);
+      border: 2px dashed #E0E0E0;
+    }
+
+    .lock-overlay:hover {
+      background: rgba(248, 248, 248, 0.98);
+    }
+
+    .lock-overlay:hover .lock-box {
+      transform: scale(1.03);
+      box-shadow: 0 8px 24px rgba(139, 195, 74, 0.35);
+    }
+
+    .lock-box {
+      background: #8BC34A;
+      padding: 14px 24px;
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(139, 195, 74, 0.3);
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .lock-hint {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #558B2F;
+      font-weight: 500;
+    }
+
+    /* Pro badge on buttons - simple style */
+    .btn-option.pro-locked {
+      position: relative;
+      border: 2px solid #E0E0E0;
+      background: #F8F8F8;
+      color: var(--text-muted);
+    }
+
+    .btn-option.pro-locked:hover {
+      border-color: #8BC34A;
+      background: #F0F4EC;
+      transform: translateY(-1px);
+    }
+
+    .btn-option.pro-locked .pro-badge {
+      margin-left: 6px;
+    }
+
+    .relative {
+      position: relative;
+    }
+
+    .opacity-50 {
+      opacity: 0.5;
+    }
+
+    /* Feature preview list in locked sections */
+    .pro-feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(245, 158, 11, 0.3);
+    }
+
+    .pro-feature-tag {
+      background: rgba(139, 195, 74, 0.15);
+      color: #558B2F;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-light);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 16px 24px;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .filter-input {
+      position: relative;
+    }
+
+    .filter-input .select,
+    .filter-input .input {
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .filter-input.pro-locked-input {
+      position: relative;
+    }
+
+    .filter-input.pro-locked-input .select,
+    .filter-input.pro-locked-input .input {
+      background: white;
+      border-color: var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .filter-input.pro-locked-input:hover .select,
+    .filter-input.pro-locked-input:hover .input {
+      border-color: var(--primary-light);
+    }
+
+    .pro-input-badge {
+      position: absolute;
+      top: -6px;
+      right: calc(100% - 280px + 8px);
+      background: #8BC34A;
+      color: white;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 5px;
+      border-radius: 3px;
+      letter-spacing: 0.3px;
+      z-index: 10;
+    }
+
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .date-range .input {
+      width: 140px;
+    }
+
+    .date-range-separator {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Generation Method Display */
+    .method-display {
+      padding: 16px 20px;
+      background: var(--border-light);
+      border-radius: var(--radius-md);
+      margin-top: 20px;
+    }
+
+    .method-display-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .method-display-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    /* Progress Circle */
+    .progress-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .progress-circle {
+      width: 140px;
+      height: 140px;
+      position: relative;
+    }
+
+    .progress-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary-darker);
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Button Group */
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-option {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      background: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .btn-option:hover {
+      border-color: var(--primary-light);
+      background: var(--primary-bg);
+    }
+
+    .btn-option.active {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+      color: var(--primary-darker);
+    }
+
+    .btn-option.disabled {
+      opacity: 0.6;
+      cursor: pointer;
+    }
+
+    /* Upgrade Bar */
+    .upgrade-bar {
+      background: #F0F4EC;
+      border: 1px solid #C5E1A5;
+      padding: 14px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: #558B2F;
+      border-radius: var(--radius-md);
+    }
+
+    .upgrade-bar-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .upgrade-bar-icon {
+      font-size: 18px;
+    }
+
+    .upgrade-bar .btn {
+      padding: 8px 16px;
+      font-size: 12px;
+      background: #8BC34A;
+      color: white;
+      border: none;
+      box-shadow: 0 2px 4px rgba(139, 195, 74, 0.3);
+    }
+
+    .upgrade-bar .btn:hover {
+      background: #7CB342;
+    }
+
+    /* Table */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 14px 16px;
+      background: var(--border-light);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table tr:hover {
+      background: var(--border-light);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .thumb {
+      width: 56px;
+      height: 38px;
+      background: linear-gradient(135deg, #14B8A6, #3B82F6);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .link {
+      color: var(--primary-darker);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .status-done {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--tag-green-text);
+      font-weight: 500;
+      background: var(--tag-green-bg);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .status-done::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--tag-green-text);
+      border-radius: 50%;
+    }
+
+    /* Footer Grid */
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 28px;
+    }
+
+    .footer-card {
+      padding: 24px;
+    }
+
+    .footer-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .footer-card p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    .stars {
+      color: #FBBF24;
+      font-size: 20px;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    /* Section */
+    .section {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      background: var(--border-light);
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Utilities */
+    .text-center {
+      text-align: center;
+    }
+
+    .mb-2 {
+      margin-bottom: 8px;
+    }
+
+    .mb-3 {
+      margin-bottom: 12px;
+    }
+
+    .mb-4 {
+      margin-bottom: 16px;
+    }
+
+    .mt-4 {
+      margin-top: 16px;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* Checkbox styling */
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      accent-color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    /* SVG icons in sidebar */
+    .nav-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Stats Cards */
+    .stats-legend {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .stat-dot.empty {
+      background: var(--border);
+    }
+
+    .stat-dot.filled {
+      background: var(--primary);
+    }
+
+    /* Action Cards */
+    .action-section {
+      display: flex;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .action-content {
+      flex: 1;
+    }
+
+    .method-selector {
+      margin-bottom: 24px;
+    }
+
+    .method-selector label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .method-selector-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* License Active State */
+    .license-active-header {
+      background: var(--primary-bg);
+      border-bottom: 1px solid var(--primary-light);
+    }
+
+    .license-check {
+      width: 56px;
+      height: 56px;
+      background: var(--primary-lighter);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: var(--primary-darker);
+    }
+
+    .license-badge {
+      background: var(--primary);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 10px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #558B2F;
+    }
+
+    .feature-item::before {
+      content: '✓';
+      color: #8BC34A;
+      font-weight: 700;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--border-light);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Background type dynamic fields */
+    .bg-field-container {
+      margin-top: 16px;
+      padding: 16px;
+      background: var(--border-light);
+      border-radius: var(--radius-md);
+    }
+
+    .color-picker-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .color-picker-input {
+      width: 60px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      padding: 2px;
+    }
+
+    .color-picker-input::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .color-picker-input::-webkit-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+
+    .upload-field {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .upload-btn {
+      width: fit-content;
+      padding: 10px 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .upload-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .thumbnail-display {
+      width: 200px;
+      height: 105px;
+      background: var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    .thumbnail-display img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Thumbnail Preview Section */
+    .preview-section {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      margin-top: 24px;
+    }
+
+    .preview-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .preview-image {
+      width: 100%;
+      max-width: 600px;
+      height: 315px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+
+    .preview-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    .preview-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Fixed Right Side Preview Panel */
+    .fixed-preview-panel {
+      position: fixed;
+      right: 32px;
+      top: 100px;
+      width: 320px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+    }
+
+    .fixed-preview-panel .preview-image {
+      width: 100%;
+      height: 157px;
+      margin-bottom: 12px;
+    }
+
+    .fixed-preview-panel .preview-meta {
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Pro Tips Section */
+    .pro-tips {
+      margin-top: 16px;
+      padding: 16px;
+      background: #D1F2EB;
+      border-radius: var(--radius-md);
+      border: 1px solid #A7E7DC;
+    }
+
+    .pro-tips-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0D7261;
+      margin-bottom: 10px;
+    }
+
+    .pro-tips-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .pro-tips-list li {
+      font-size: 12px;
+      color: #0D7261;
+      margin-bottom: 6px;
+      padding-left: 8px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .pro-tips-list li:before {
+      content: "•";
+      position: absolute;
+      left: -4px;
+      font-weight: bold;
+    }
+
+    .pro-tips-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Logs Page */
+    .logs-header {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .logs-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .log-viewer {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 400px;
+      overflow-y: auto;
+      color: var(--text-primary);
+    }
+
+    .log-entry {
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .log-entry:last-child {
+      border-bottom: none;
+    }
+
+    .log-time {
+      color: var(--text-muted);
+      margin-right: 12px;
+    }
+
+    .log-level {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-right: 8px;
+      text-transform: uppercase;
+    }
+
+    .log-level.info {
+      background: #0EA5E9;
+      color: white;
+    }
+
+    .log-level.success {
+      background: #22C55E;
+      color: white;
+    }
+
+    .log-level.warning {
+      background: #F59E0B;
+      color: white;
+    }
+
+    .log-level.error {
+      background: #EF4444;
+      color: white;
+    }
+
+    .log-message {
+      color: var(--text-secondary);
+    }
+
+    .logs-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .logs-size {
+      background: var(--border-light);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="flex">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">Auto Featured Image</div>
+        <div class="sidebar-version">Version 4.2.2</div>
+      </div>
+      <nav id="nav"></nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="page-header">
+        <h1 class="page-title" id="page-title">Generate Images</h1>
+        <div class="breadcrumb">
+          Auto Featured Image <span>›</span> <span id="page-subtitle">Generate Featured Images</span>
+        </div>
+      </div>
+      <div id="content"></div>
+      <div class="footer-grid">
+        <div class="card footer-card">
+          <h3>Help Us Improve</h3>
+          <p>Love the plugin? Leave a review on WordPress.org to help others discover it.</p>
+          <div class="stars">★★★★★</div>
+          <a href="#" class="link">Rate on WordPress.org →</a>
+        </div>
+        <div class="card footer-card">
+          <h3>Need Help?</h3>
+          <p>We provide free support for this plugin. Get help with setup, troubleshooting, and more.</p>
+          <a href="#" class="link">Get Free Support →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 'generate';
+    let settingsTab = 'general';
+    let isPro = false;
+    let generationMethod = 'title';
+    let backgroundType = 'color'; // Track selected background type
+    let bgColor = '#667eea';
+    let bgImageUrl = '';
+    let defaultImageUrl = ''; // For default image upload
+
+    const navItems = [
+      { id: 'generate', label: 'Generate Images', sub: 'Create featured images', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>' },
+      { id: 'settings', label: 'Settings', sub: 'Configure options', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>' },
+      { id: 'logs', label: 'Activity Logs', sub: 'View debug reports', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>' },
+      { id: 'license', label: 'License', sub: 'Activate Pro version', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>' }
+    ];
+
+    const generationMethods = [
+      { value: 'title', label: 'Generate from title' },
+      { value: 'find', label: 'Find in post' },
+      { value: 'find_generate', label: 'Find or generate' },
+      { value: 'google', label: 'Google search' },
+      { value: 'find_google', label: 'Find or Google' },
+      { value: 'default', label: 'Use default image' },
+      { value: 'ai', label: 'AI image generation' }
+    ];
+
+    function render() {
+      renderNav();
+      renderContent();
+    }
+
+    function renderNav() {
+      document.getElementById('nav').innerHTML = navItems.map(item => `
+        <button class="nav-item ${currentPage === item.id ? 'active' : ''}" onclick="navigate('${item.id}')">
+          <span class="nav-icon">${item.icon}</span>
+          <div>
+            <div class="nav-label">${item.label}</div>
+            <div class="nav-sub">${item.sub}</div>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function navigate(page) {
+      currentPage = page;
+      const pageInfo = navItems.find(n => n.id === page);
+      document.getElementById('page-title').textContent = pageInfo?.label || page;
+      document.getElementById('page-subtitle').textContent = pageInfo?.sub || '';
+      render();
+    }
+
+    function setSettingsTab(tab) {
+      settingsTab = tab;
+      render();
+    }
+
+    function setGenerationMethod(value) {
+      generationMethod = value;
+    }
+
+    function activateLicense() {
+      const key = document.getElementById('license-key').value;
+      if (key === 'AFI-PRO-1234-5678' || key === 'AFI-BUS-ABCD-EFGH') {
+        isPro = true;
+        render();
+      } else {
+        alert('Invalid license key');
+      }
+    }
+
+    function deactivateLicense() {
+      isPro = false;
+      render();
+    }
+
+    function setLicenseKey(key) {
+      document.getElementById('license-key').value = key;
+    }
+
+    function setBgType(type) {
+      backgroundType = type;
+      render();
+    }
+
+    function updateBgColor(color) {
+      bgColor = color;
+      render();
+    }
+
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          bgImageUrl = e.target.result;
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function handleDefaultImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          defaultImageUrl = e.target.result;
+          render();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+
+    function renderContent() {
+      const content = document.getElementById('content');
+
+      if (currentPage === 'generate') {
+        content.innerHTML = renderGeneratePage();
+      } else if (currentPage === 'settings') {
+        content.innerHTML = renderSettingsPage();
+      } else if (currentPage === 'license') {
+        content.innerHTML = renderLicensePage();
+      } else if (currentPage === 'logs') {
+        content.innerHTML = renderLogsPage();
+      } else {
+        content.innerHTML = `
+          <div class="card card-body text-center" style="padding:60px;">
+            <div style="font-size:48px;margin-bottom:16px;">📋</div>
+            <h2 style="font-size:18px;margin-bottom:8px;font-weight:600;">${navItems.find(n => n.id === currentPage)?.label || 'Page'}</h2>
+            <p class="text-muted">This page content would go here.</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderUpgradeBar() {
+      if (isPro) return '';
+      return `
+        <div class="upgrade-bar">
+          <div class="upgrade-bar-content">
+            <span class="upgrade-bar-icon">✨</span>
+            <span><strong>Unlock all features</strong> — Get access to Pro-only tools and integrations</span>
+          </div>
+          <button class="btn" onclick="navigate('license')">Upgrade to Pro</button>
+        </div>
+      `;
+    }
+
+    function renderGeneratePage() {
+      const methodOptions = generationMethods.map(m =>
+        `<option value="${m.value}" ${generationMethod === m.value ? 'selected' : ''}>${m.label}</option>`
+      ).join('');
+
+      const methodDescriptions = {
+        'title': 'Create from the title on a colored background',
+        'find': 'Find an existing image within the post content',
+        'find_generate': 'Try to find in post, otherwise generate from title',
+        'google': 'Search Google Images for relevant images',
+        'find_google': 'Try to find in post, otherwise search Google',
+        'default': 'Use a default placeholder image',
+        'ai': 'Generate unique images using AI'
+      };
+
+      return `
+        <div class="card card-body">
+          <div class="action-section">
+            <div class="progress-container">
+              <div class="progress-circle">
+                <svg width="140" height="140" viewBox="0 0 140 140">
+                  <circle cx="70" cy="70" r="60" stroke="#E8EAED" stroke-width="10" fill="none"/>
+                  <circle cx="70" cy="70" r="60" stroke="var(--primary)" stroke-width="10" fill="none"
+                    stroke-dasharray="377" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 70 70)"/>
+                </svg>
+                <div class="progress-text">
+                  <div class="progress-value">100%</div>
+                  <div class="progress-label">Complete</div>
+                </div>
+              </div>
+              <p style="margin-top:16px;font-size:13px;color:var(--text-muted);text-align:center;">
+                <strong style="color:var(--primary-darker);">100%</strong> of your posts have a<br>featured image
+              </p>
+            </div>
+            <div class="action-content">
+              <div class="stats-legend">
+                <div class="stat-item">
+                  <span class="stat-dot empty"></span>
+                  <span class="text-muted">Without featured image — <strong>0</strong></span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-dot filled"></span>
+                  <span class="text-muted">With featured image — <strong>3</strong></span>
+                </div>
+              </div>
+
+              <!-- Filters Section -->
+              <div class="filter-grid">
+                <div class="filter-label">Post type</div>
+                <div class="filter-input">
+                  <select class="select">
+                    <option>Posts</option>
+                    <option>Pages</option>
+                    <option>Products</option>
+                    <option>All post types</option>
+                  </select>
+                </div>
+
+                <div class="filter-label">Post status</div>
+                <div class="filter-input ${!isPro ? 'pro-locked-input' : ''}" ${!isPro ? 'onclick="navigate(\'license\')"' : ''}>
+                  ${!isPro ? '<span class="pro-input-badge">PRO</span>' : ''}
+                  <select class="select" ${!isPro ? 'disabled style="pointer-events:none;"' : ''}>
+                    <option>All statuses</option>
+                    <option>Published</option>
+                    <option>Draft</option>
+                    <option>Pending</option>
+                  </select>
+                </div>
+
+                <div class="filter-label">Post category</div>
+                <div class="filter-input ${!isPro ? 'pro-locked-input' : ''}" ${!isPro ? 'onclick="navigate(\'license\')"' : ''}>
+                  ${!isPro ? '<span class="pro-input-badge">PRO</span>' : ''}
+                  <select class="select" ${!isPro ? 'disabled style="pointer-events:none;"' : ''}>
+                    <option>All categories</option>
+                    <option>Uncategorized</option>
+                    <option>News</option>
+                    <option>Blog</option>
+                  </select>
+                </div>
+
+                <div class="filter-label">Date from</div>
+                <div class="filter-input ${!isPro ? 'pro-locked-input' : ''}" ${!isPro ? 'onclick="navigate(\'license\')"' : ''}>
+                  ${!isPro ? '<span class="pro-input-badge">PRO</span>' : ''}
+                  <div class="date-range">
+                    <input type="date" class="input" ${!isPro ? 'disabled style="pointer-events:none;"' : ''}>
+                    <span class="date-range-separator">to</span>
+                    <input type="date" class="input" ${!isPro ? 'disabled style="pointer-events:none;"' : ''}>
+                  </div>
+                </div>
+
+                <div class="filter-label">Bulk generation method</div>
+                <div class="filter-input">
+                  <select class="select" onchange="setGenerationMethod(this.value)">
+                    ${methodOptions}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Method Description -->
+              <div class="method-display">
+                <strong style="font-size:14px;color:var(--text-primary);">${generationMethods.find(m => m.value === generationMethod)?.label || 'Generate from title'}</strong>
+                <p class="method-display-desc" style="margin:4px 0 0 0;">${methodDescriptions[generationMethod]}</p>
+                <a href="#" class="link" style="font-size:12px;" onclick="navigate('settings'); return false;">More options in settings →</a>
+              </div>
+
+              <div class="btn-group" style="margin-top:20px;">
+                <button class="btn btn-primary" style="padding:14px 28px;font-size:14px;">
+                  Generate Featured Images
+                </button>
+                <button class="btn btn-secondary" style="padding:14px 28px;font-size:14px;">
+                  Delete Featured Images
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Generation Log</div>
+              <div class="card-subtitle">Shows the last 100 generated images</div>
+            </div>
+            <button class="btn btn-ghost">View All</button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width:70px;">Preview</th>
+                <th>Post Title</th>
+                <th style="text-align:center;">Size</th>
+                <th style="text-align:center;">Method</th>
+                <th style="text-align:center;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="thumb"></div></td>
+                <td><a href="#" class="link">Sample Page</a></td>
+                <td style="text-align:center;">377 KB</td>
+                <td style="text-align:center;">From title</td>
+                <td style="text-align:center;"><span class="status-done">Done</span></td>
+              </tr>
+              <tr>
+                <td><div class="thumb"></div></td>
+                <td><a href="#" class="link">Privacy Policy</a></td>
+                <td style="text-align:center;">378 KB</td>
+                <td style="text-align:center;">From title</td>
+                <td style="text-align:center;"><span class="status-done">Done</span></td>
+              </tr>
+              <tr>
+                <td><div class="thumb"></div></td>
+                <td><a href="#" class="link">robots</a></td>
+                <td style="text-align:center;">378 KB</td>
+                <td style="text-align:center;">From title</td>
+                <td style="text-align:center;"><span class="status-done">Done</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function renderSettingsPage() {
+      const proBadge = !isPro ? '<span class="pro-badge">PRO</span>' : '';
+
+      return `
+        ${renderUpgradeBar()}
+        <div class="card">
+          <div class="tabs">
+            <button class="tab ${settingsTab === 'general' ? 'active' : ''}" onclick="setSettingsTab('general')">General</button>
+            <button class="tab ${settingsTab === 'image' ? 'active' : ''}" onclick="setSettingsTab('image')">Image Settings</button>
+            <button class="tab ${settingsTab === 'apis' ? 'active' : ''}" onclick="setSettingsTab('apis')">External APIs</button>
+          </div>
+          <div class="card-body">
+            ${settingsTab === 'general' ? renderGeneralSettings() : ''}
+            ${settingsTab === 'image' ? renderImageSettings() : ''}
+            ${settingsTab === 'apis' ? renderApiSettings() : ''}
+            <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGeneralSettings() {
+      const methodOptions = generationMethods.map(m =>
+        `<option value="${m.value}" ${generationMethod === m.value ? 'selected' : ''}>${m.label}</option>`
+      ).join('');
+
+      return `
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Add featured image when saving a post</div>
+            <div class="setting-desc">Automatically add featured image when saving</div>
+          </div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Add featured image on schedule</div>
+            <div class="setting-desc">Automatically add via CRON schedule</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row" style="display:block;">
+          <div class="setting-label mb-3">Bulk generation method</div>
+          <select class="select" style="width:240px;">
+            ${methodOptions}
+          </select>
+        </div>
+        <div class="setting-row" style="display:block;">
+          <div class="setting-label mb-3">Generate for post types</div>
+          <div class="flex" style="gap:20px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Posts</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" checked> Pages</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Products</label>
+          </div>
+        </div>
+        
+        ${!isPro ? `
+        <div class="pro-locked-section" style="margin-top:24px;">
+          <div class="pro-locked-header">
+            <div class="pro-locked-header-left">
+              <div class="pro-locked-header-icon">📥</div>
+              <div class="pro-locked-header-text">
+                <h4>Auto Image Import</h4>
+                <p>Automatically import external images to your media library</p>
+              </div>
+            </div>
+            <button class="btn-unlock" onclick="navigate('license')">🔓 Unlock Pro</button>
+          </div>
+          <div class="pro-locked-content">
+            <div class="setting-row">
+              <div>
+                <div class="setting-label">Auto images import</div>
+                <div class="setting-desc">Import post images to the media library</div>
+              </div>
+              <div class="toggle"></div>
+            </div>
+            <div class="setting-row" style="display:block;border:none;">
+              <div class="setting-label mb-3">Import for post types</div>
+              <div class="flex" style="gap:20px;">
+                <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" disabled> Posts</label>
+                <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" disabled> Pages</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : `
+        <div class="setting-row" style="margin-top:24px;">
+          <div>
+            <div class="setting-label">Auto images import</div>
+            <div class="setting-desc">Import post images to the media library</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row" style="display:block;">
+          <div class="setting-label mb-3">Import for post types</div>
+          <div class="flex" style="gap:20px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Posts</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Pages</label>
+          </div>
+        </div>
+        `}
+        
+        <div class="setting-row" style="border:none;margin-top:16px;">
+          <div>
+            <div class="setting-label">Delete settings when removing the plugin</div>
+            <div class="setting-desc">Remove all plugin data on uninstallation</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      `;
+    }
+
+    function renderImageSettings() {
+      const proBadge = !isPro ? '<span class="pro-badge">PRO</span>' : '';
+
+      // Dynamic background field based on selected type
+      let bgFieldHtml = '';
+      if (backgroundType === 'color') {
+        bgFieldHtml = `
+          <div class="bg-field-container">
+            <label class="form-label">Background Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" value="${bgColor}" class="color-picker-input" onchange="updateBgColor(this.value)">
+              <input type="text" value="${bgColor}" class="input" style="width:120px;" readonly>
+            </div>
+          </div>
+        `;
+      } else if (backgroundType === 'image') {
+        bgFieldHtml = `
+          <div class="bg-field-container">
+            <div class="upload-field">
+              <label class="form-label">Background Image</label>
+              <input type="file" id="bg-image-upload" accept="image/*" style="display:none;" onchange="handleImageUpload(event)">
+              <button class="upload-btn" onclick="document.getElementById('bg-image-upload').click()">
+                📁 Choose Image
+              </button>
+              ${bgImageUrl ? `
+                <div class="thumbnail-display">
+                  <img src="${bgImageUrl}" alt="Background preview">
+                </div>
+              ` : `
+                <div class="thumbnail-display">
+                  No image selected
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      } else if (backgroundType === 'default') {
+        bgFieldHtml = `
+          <div class="bg-field-container">
+            <div class="upload-field">
+              <label class="form-label">Default Image</label>
+              <input type="file" id="default-image-upload" accept="image/*" style="display:none;" onchange="handleDefaultImageUpload(event)">
+              <button class="upload-btn" onclick="document.getElementById('default-image-upload').click()">
+                📁 Choose Default Image
+              </button>
+              ${defaultImageUrl ? `
+                <div class="thumbnail-display">
+                  <img src="${defaultImageUrl}" alt="Default image preview">
+                </div>
+              ` : `
+                <div class="thumbnail-display">
+                  No image selected
+                </div>
+              `}
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <!-- Fixed Right Side Preview Panel -->
+        <div class="fixed-preview-panel">
+          <div class="preview-title">Live Preview</div>
+          <div class="preview-image" style="background: ${backgroundType === 'color' ? bgColor : (backgroundType === 'image' && bgImageUrl ? `url(${bgImageUrl})` : (backgroundType === 'default' && defaultImageUrl ? `url(${defaultImageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'))}; background-size: cover; background-position: center;">
+            ${(backgroundType === 'image' && bgImageUrl) || (backgroundType === 'default' && defaultImageUrl) ? '' : 'HELLO WORLD!'}
+          </div>
+          <div class="preview-meta">
+            <div class="preview-meta-item">
+              <span>400 × 400px</span>
+              <span style="margin-left: auto; font-weight: 600;">PNG</span>
+            </div>
+          </div>
+          
+          <!-- Pro Tips Section -->
+          <div class="pro-tips">
+            <div class="pro-tips-header">
+              💡 Pro Tips
+            </div>
+            <ul class="pro-tips-list">
+              <li>Use 1200×630 for social sharing</li>
+              <li>High contrast improves readability</li>
+              <li>Keep text under 50 characters</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="setting-label mb-3">Background Type</div>
+          <div class="btn-group">
+            <button class="btn-option ${backgroundType === 'color' ? 'active' : ''}" onclick="setBgType('color')">Color</button>
+            <button class="btn-option ${backgroundType === 'image' ? 'active' : ''} ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : "setBgType('image')"}">Image ${proBadge}</button>
+            <button class="btn-option ${backgroundType === 'default' ? 'active' : ''}" onclick="setBgType('default')">Default</button>
+          </div>
+          ${bgFieldHtml}
+        </div>
+
+        <div class="mb-4">
+          <div class="setting-label mb-3">Image Format</div>
+          <div class="btn-group">
+            <button class="btn-option active">JPEG</button>
+            <button class="btn-option">PNG</button>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-4">
+          <div>
+            <label class="form-label">Width (px)</label>
+            <input type="number" value="1200" class="input">
+          </div>
+          <div>
+            <label class="form-label">Height (px)</label>
+            <input type="number" value="630" class="input">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="setting-label mb-3">Font Source</div>
+          <div class="btn-group mb-4">
+            <button class="btn-option active">Preset</button>
+            <button class="btn-option ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : ''}">Google Font ${proBadge}</button>
+            <button class="btn-option ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : ''}">Upload Font ${proBadge}</button>
+          </div>
+          <select class="select" style="width:220px;">
+            <option>Arial</option>
+            <option>Helvetica</option>
+            <option>Georgia</option>
+            <option>Verdana</option>
+          </select>
+        </div>
+
+        <div class="grid-3 mb-4">
+          <div>
+            <label class="form-label">Font Size (pt)</label>
+            <input type="number" value="32" class="input">
+          </div>
+          <div>
+            <label class="form-label">Font Color</label>
+            <input type="text" value="#FFFFFF" class="input">
+          </div>
+          <div>
+            <label class="form-label">Text Transform</label>
+            <select class="select">
+              <option>None</option>
+              <option selected>UPPERCASE</option>
+              <option>lowercase</option>
+            </select>
+          </div>
+        </div>
+
+        ${!isPro ? `
+        <div class="pro-locked-section">
+          <div class="pro-locked-header">
+            <div class="pro-locked-header-left">
+              <div class="pro-locked-header-icon">🎨</div>
+              <div class="pro-locked-header-text">
+                <h4>Layout & Text Additions</h4>
+                <p>Advanced text positioning and styling options</p>
+              </div>
+            </div>
+            <button class="btn-unlock" onclick="navigate('license')">🔓 Unlock Pro</button>
+          </div>
+          <div class="pro-locked-content">
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">Horizontal Align</label>
+                <select class="select" disabled>
+                  <option>Left</option>
+                  <option selected>Center</option>
+                  <option>Right</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Vertical Align</label>
+                <select class="select" disabled>
+                  <option>Top</option>
+                  <option selected>Center</option>
+                  <option>Bottom</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Text Before</label>
+                <input type="text" class="input" placeholder="Prefix..." disabled>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Text After</label>
+                <input type="text" class="input" placeholder="Suffix..." disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+        ` : `
+        <div class="section" style="background:white;">
+          <div class="section-title">Layout & Text Additions</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Horizontal Align</label>
+              <select class="select">
+                <option>Left</option>
+                <option selected>Center</option>
+                <option>Right</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Vertical Align</label>
+              <select class="select">
+                <option>Top</option>
+                <option selected>Center</option>
+                <option>Bottom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Text Before</label>
+              <input type="text" class="input" placeholder="Prefix...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Text After</label>
+              <input type="text" class="input" placeholder="Suffix...">
+            </div>
+          </div>
+        </div>
+        `}
+      `;
+    }
+
+    function renderImportSettings() {
+      if (!isPro) {
+        return `
+          <div class="pro-locked-section">
+            <div class="pro-locked-header">
+              <div class="pro-locked-header-left">
+                <div class="pro-locked-header-icon">📥</div>
+                <div class="pro-locked-header-text">
+                  <h4>Auto Image Import</h4>
+                  <p>Automatically import external images to your media library</p>
+                </div>
+              </div>
+              <button class="btn-unlock" onclick="navigate('license')">🔓 Unlock Pro</button>
+            </div>
+            <div class="pro-locked-content">
+              <div class="setting-row">
+                <div>
+                  <div class="setting-label">Auto images import</div>
+                  <div class="setting-desc">Import post images to the media library</div>
+                </div>
+                <div class="toggle"></div>
+              </div>
+              <div class="setting-row" style="display:block;border:none;">
+                <div class="setting-label mb-3">Import for post types</div>
+                <div class="flex" style="gap:20px;">
+                  <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" disabled> Posts</label>
+                  <label style="display:flex;align-items:center;gap:8px;"><input type="checkbox" disabled> Pages</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pro-feature-list">
+            <span class="pro-feature-tag">External URL Import</span>
+            <span class="pro-feature-tag">Bulk Processing</span>
+            <span class="pro-feature-tag">Auto-rename Files</span>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Auto images import</div>
+            <div class="setting-desc">Import post images to the media library</div>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="setting-row" style="display:block;border:none;">
+          <div class="setting-label mb-3">Import for post types</div>
+          <div class="flex" style="gap:20px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Posts</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox"> Pages</label>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderApiSettings() {
+      return `
+        <div class="section" style="background:white;">
+          <div class="section-title">🔍 Google Custom Search</div>
+          <div class="grid-2">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">API Key</label>
+              <input type="text" class="input" placeholder="Enter API Key">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Search Engine ID</label>
+              <input type="text" class="input" placeholder="Enter Search Engine ID">
+            </div>
+          </div>
+        </div>
+
+        ${!isPro ? `
+        <div class="pro-locked-section" style="margin-bottom:20px;">
+          <div class="pro-locked-header">
+            <div class="pro-locked-header-left">
+              <div class="pro-locked-header-icon">🖼️</div>
+              <div class="pro-locked-header-text">
+                <h4>Premium Image APIs</h4>
+                <p>Access millions of high-quality stock images</p>
+              </div>
+            </div>
+            <button class="btn-unlock" onclick="navigate('license')">🔓 Unlock Pro</button>
+          </div>
+          <div class="pro-locked-content">
+            <div style="display:grid;gap:16px;">
+              <div class="section" style="background:rgba(255,255,255,0.7);margin:0;">
+                <div class="section-title" style="margin-bottom:12px;">📷 Pixabay</div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">API Key</label>
+                  <input type="text" class="input" placeholder="Enter API Key" disabled>
+                </div>
+              </div>
+              <div class="section" style="background:rgba(255,255,255,0.7);margin:0;">
+                <div class="section-title" style="margin-bottom:12px;">🖼️ Unsplash</div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label">Access Key</label>
+                  <input type="text" class="input" placeholder="Enter Access Key" disabled>
+                </div>
+              </div>
+              <div class="section" style="background:rgba(255,255,255,0.7);margin:0;">
+                <div class="section-title" style="margin-bottom:12px;">🤖 IBM Watson</div>
+                <div class="grid-2">
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">API Key</label>
+                    <input type="text" class="input" placeholder="Enter API Key" disabled>
+                  </div>
+                  <div class="form-group" style="margin:0;">
+                    <label class="form-label">Endpoint URL</label>
+                    <input type="text" class="input" placeholder="Enter Endpoint URL" disabled>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pro-feature-list" style="margin-top:-8px;">
+          <span class="pro-feature-tag">1M+ Pixabay Images</span>
+          <span class="pro-feature-tag">Unsplash HD Photos</span>
+          <span class="pro-feature-tag">AI Image Analysis</span>
+        </div>
+        ` : `
+        <div class="section" style="background:white;">
+          <div class="section-title">📷 Pixabay</div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">API Key</label>
+            <input type="text" class="input" placeholder="Enter API Key">
+          </div>
+        </div>
+
+        <div class="section" style="background:white;">
+          <div class="section-title">🖼️ Unsplash</div>
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">Access Key</label>
+            <input type="text" class="input" placeholder="Enter Access Key">
+          </div>
+        </div>
+
+        <div class="section" style="background:white;">
+          <div class="section-title">🤖 IBM Watson</div>
+          <div class="grid-2">
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">API Key</label>
+              <input type="text" class="input" placeholder="Enter API Key">
+            </div>
+            <div class="form-group" style="margin:0;">
+              <label class="form-label">Endpoint URL</label>
+              <input type="text" class="input" placeholder="Enter Endpoint URL">
+            </div>
+          </div>
+        </div>
+        `}
+      `;
+    }
+
+    function renderLogsPage() {
+      const logEntries = [
+        { time: '2024-01-15 14:32:45', level: 'success', message: 'Featured image generated for "Sample Page" using title method' },
+        { time: '2024-01-15 14:32:44', level: 'info', message: 'Processing post ID 123: Sample Page' },
+        { time: '2024-01-15 14:30:12', level: 'success', message: 'Featured image generated for "Privacy Policy" using title method' },
+        { time: '2024-01-15 14:30:11', level: 'info', message: 'Processing post ID 122: Privacy Policy' },
+        { time: '2024-01-15 14:28:03', level: 'warning', message: 'Post "Test Draft" skipped - already has featured image' },
+        { time: '2024-01-15 14:25:55', level: 'success', message: 'Featured image generated for "robots" using title method' },
+        { time: '2024-01-15 14:25:54', level: 'info', message: 'Processing post ID 121: robots' },
+        { time: '2024-01-15 14:20:00', level: 'info', message: 'Batch generation started - 3 posts queued' },
+        { time: '2024-01-15 10:15:33', level: 'error', message: 'Failed to generate image for "Old Post" - GD library error' },
+        { time: '2024-01-15 10:15:32', level: 'info', message: 'Processing post ID 98: Old Post' },
+        { time: '2024-01-14 16:45:20', level: 'info', message: 'Settings updated: Generation method changed to "title"' },
+        { time: '2024-01-14 09:00:01', level: 'info', message: 'CRON job executed - no posts without featured image' },
+      ];
+
+      const logsHtml = logEntries.map(log => `
+        <div class="log-entry">
+          <span class="log-time">${log.time}</span>
+          <span class="log-level ${log.level}">${log.level}</span>
+          <span class="log-message">${log.message}</span>
+        </div>
+      `).join('');
+
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Debug Logs</div>
+              <div class="card-subtitle">View plugin activity and troubleshoot issues</div>
+            </div>
+            <div class="logs-info">
+              <span>Log size:</span>
+              <span class="logs-size">6 MB</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="logs-header">
+              <div class="logs-actions">
+                <button class="btn btn-secondary">
+                  <span class="dashicons dashicons-download" style="font-size:16px;"></span>
+                  Export Debug Information
+                </button>
+                <button class="btn btn-danger">
+                  <span class="dashicons dashicons-trash" style="font-size:16px;"></span>
+                  Clean-up Logs (6 MB)
+                </button>
+              </div>
+            </div>
+            <div class="log-viewer">
+              ${logsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderLicensePage() {
+      if (isPro) {
+        return `
+          <div class="card" style="max-width:500px;">
+            <div class="card-body license-active-header">
+              <div class="flex" style="align-items:center;gap:20px;">
+                <div class="license-check">✓</div>
+                <div>
+                  <div style="font-weight:600;font-size:16px;">Pro License <span class="license-badge">ACTIVE</span></div>
+                  <div class="text-muted" style="font-family:monospace;margin-top:4px;">AFI-PRO-XXXX-XXXX</div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <p class="text-muted mb-4">Your Pro license is active. You have access to all premium features.</p>
+              <button class="btn btn-danger" onclick="deactivateLicense()">Deactivate License</button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card" style="max-width:500px;">
+          <div class="card-body text-center" style="border-bottom:1px solid var(--border);padding:32px;">
+            <div style="width:64px;height:64px;background:#FEF3C7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">🔑</div>
+            <h2 style="font-size:20px;margin-bottom:6px;font-weight:700;">Activate Pro License</h2>
+            <p class="text-muted">Enter your license key to unlock all Pro features</p>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">License Key</label>
+              <input type="text" id="license-key" class="input" placeholder="AFI-XXX-XXXX-XXXX" style="text-align:center;font-family:monospace;letter-spacing:2px;font-size:15px;">
+            </div>
+            <button class="btn btn-primary" style="width:100%;" onclick="activateLicense()">Activate License</button>
+
+            <div style="margin-top:24px;padding:18px;background:var(--border-light);border-radius:var(--radius-md);">
+              <p class="text-muted text-center mb-3" style="font-size:12px;">Demo keys for testing:</p>
+              <button class="btn-option" style="width:100%;margin-bottom:8px;font-family:monospace;font-size:12px;" onclick="setLicenseKey('AFI-PRO-1234-5678')">AFI-PRO-1234-5678</button>
+              <button class="btn-option" style="width:100%;font-family:monospace;font-size:12px;" onclick="setLicenseKey('AFI-BUS-ABCD-EFGH')">AFI-BUS-ABCD-EFGH</button>
+            </div>
+
+            <div style="margin-top:24px;padding:20px;background:#F0F4EC;border:1px solid #C5E1A5;border-radius:var(--radius-md);">
+              <h4 style="font-size:14px;color:#558B2F;margin-bottom:12px;font-weight:600;">Pro Features Include:</h4>
+              <div class="features-grid">
+                <div class="feature-item">Auto Image Import</div>
+                <div class="feature-item">Background Images</div>
+                <div class="feature-item">Google Fonts</div>
+                <div class="feature-item">Custom Font Upload</div>
+                <div class="feature-item">Layout Controls</div>
+                <div class="feature-item">Advanced Filters</div>
+                <div class="feature-item">Pixabay API</div>
+                <div class="feature-item">Unsplash API</div>
+                <div class="feature-item">IBM Watson</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize
+    render();
+  </script>
+</body>
+
+</html>
