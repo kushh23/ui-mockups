@@ -925,7 +925,8 @@
 
     .radio-option {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
       gap: 10px;
       padding: 12px 14px;
       border: 1px solid var(--border);
@@ -933,6 +934,10 @@
       cursor: pointer;
       transition: var(--transition);
       background: white;
+    }
+
+    .radio-option input[type="radio"] {
+      margin-top: 2px;
     }
 
     .radio-option:hover {
@@ -970,6 +975,14 @@
       color: var(--text-secondary);
       cursor: pointer;
       transition: var(--transition);
+    }
+
+    .radio-desc {
+      width: 100%;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 26px;
+      margin-top: -4px;
     }
 
     /* Upgrade Bar */
@@ -1904,6 +1917,14 @@
     // UI state
     let upgradeBarDismissed = false;
     let showDeleteModal = false;
+    let scheduleEnabled = false;
+    let scheduleFrequency = 'daily';
+
+    // Rule-based generation
+    let generationRules = [
+      { id: 1, name: 'Default Rule', condition: 'all', conditionValue: '', method: 'title', enabled: true }
+    ];
+    let showAddRuleModal = false;
 
     // Generation state
     let isGenerating = false;
@@ -2035,6 +2056,73 @@
       render();
     }
 
+    function toggleSchedule() {
+      if (!isPro) {
+        navigate('license');
+        return;
+      }
+      scheduleEnabled = !scheduleEnabled;
+      render();
+    }
+
+    function setScheduleFrequency(freq) {
+      scheduleFrequency = freq;
+    }
+
+    function addGenerationRule() {
+      if (!isPro) {
+        navigate('license');
+        return;
+      }
+      const newId = Math.max(...generationRules.map(r => r.id), 0) + 1;
+      generationRules.push({
+        id: newId,
+        name: 'New Rule',
+        condition: 'category',
+        conditionValue: '',
+        method: 'title',
+        enabled: true
+      });
+      render();
+    }
+
+    function removeGenerationRule(id) {
+      if (generationRules.length > 1) {
+        generationRules = generationRules.filter(r => r.id !== id);
+        render();
+      }
+    }
+
+    function toggleRuleEnabled(id) {
+      const rule = generationRules.find(r => r.id === id);
+      if (rule) {
+        rule.enabled = !rule.enabled;
+        render();
+      }
+    }
+
+    function updateRuleField(id, field, value) {
+      const rule = generationRules.find(r => r.id === id);
+      if (rule) {
+        rule[field] = value;
+        // Don't render on every keystroke for text fields
+        if (field !== 'name' && field !== 'conditionValue') {
+          render();
+        }
+      }
+    }
+
+    function selectDefaultImage() {
+      // Simulate media library selection
+      defaultImageUrl = 'https://via.placeholder.com/400x200/4CAF50/FFFFFF?text=Default+Image';
+      render();
+    }
+
+    function removeDefaultImage() {
+      defaultImageUrl = '';
+      render();
+    }
+
     function updateBgColor(color) {
       bgColor = color;
       render();
@@ -2118,8 +2206,6 @@
           previewImage.style.background = bgColor;
         } else if (backgroundType === 'image' && bgImageUrl) {
           previewImage.style.background = `url(${bgImageUrl}) center/cover`;
-        } else if (backgroundType === 'default' && defaultImageUrl) {
-          previewImage.style.background = `url(${defaultImageUrl}) center/cover`;
         } else {
           previewImage.style.background = bgColor;
         }
@@ -2127,7 +2213,7 @@
 
       // Update text styling
       if (previewTextEl) {
-        const hasImage = (backgroundType === 'image' && bgImageUrl) || (backgroundType === 'default' && defaultImageUrl);
+        const hasImage = (backgroundType === 'image' && bgImageUrl);
         previewTextEl.style.fontFamily = fontFamily;
         previewTextEl.style.fontSize = Math.min(fontSize, 28) + 'px';
         previewTextEl.style.color = fontColor;
@@ -2509,18 +2595,68 @@
           </div>
           <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
-        <div class="setting-row">
-          <div>
-            <div class="setting-label">Add featured image on schedule</div>
-            <div class="setting-desc">Automatically add via CRON schedule</div>
+        <div class="setting-row" style="flex-wrap:wrap;">
+          <div style="flex:1;">
+            <div class="setting-label">Add featured image on a schedule ${!isPro ? '<span class="pro-badge">PRO</span>' : ''}</div>
+            <div class="setting-desc">Automatically add featured image according to a CRON schedule</div>
           </div>
-          <div class="toggle" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle ${scheduleEnabled && isPro ? 'on' : ''}" onclick="toggleSchedule()"></div>
         </div>
-        <div class="setting-row" style="display:block;">
-          <div class="setting-label mb-3">Generation method</div>
-          <select class="select" style="width:240px;">
-            ${methodOptions}
+        ${scheduleEnabled && isPro ? `
+        <div class="setting-row" style="display:block;background:#f9f9f9;margin:-1px -15px 0;padding:16px 15px;border-top:1px solid var(--border);">
+          <div class="setting-label mb-3">Image generation schedule</div>
+          <select class="select" style="width:240px;" onchange="setScheduleFrequency(this.value)">
+            <option value="hourly" ${scheduleFrequency === 'hourly' ? 'selected' : ''}>Once an hour</option>
+            <option value="daily" ${scheduleFrequency === 'daily' ? 'selected' : ''}>Once a day</option>
+            <option value="twicedaily" ${scheduleFrequency === 'twicedaily' ? 'selected' : ''}>Twice a day</option>
+            <option value="weekly" ${scheduleFrequency === 'weekly' ? 'selected' : ''}>Once a week</option>
+            <option value="monthly" ${scheduleFrequency === 'monthly' ? 'selected' : ''}>Once a month</option>
           </select>
+        </div>
+        ` : ''}
+
+        <div class="setting-row" style="display:block;border-bottom:none;padding-bottom:0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div class="setting-label">Generation Rules ${!isPro && generationRules.length >= 1 ? '<span class="pro-badge">PRO</span>' : ''}</div>
+              <div class="setting-desc">Define conditions for different generation methods per category, tag, or post type</div>
+            </div>
+            <button class="btn btn-secondary" style="padding:6px 12px;font-size:11px;" onclick="addGenerationRule()">
+              + Add Rule
+            </button>
+          </div>
+
+          <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+            ${generationRules.map((rule, index) => `
+              <div class="rule-row" style="padding:12px 15px;background:${index % 2 === 0 ? '#fafafa' : '#fff'};border-bottom:${index < generationRules.length - 1 ? '1px solid var(--border)' : 'none'};">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+                  <div class="toggle ${rule.enabled ? 'on' : ''}" style="flex-shrink:0;" onclick="toggleRuleEnabled(${rule.id})"></div>
+                  <input type="text" class="input" value="${rule.name}" style="flex:1;max-width:200px;" placeholder="Rule name" onchange="updateRuleField(${rule.id}, 'name', this.value)">
+                  ${generationRules.length > 1 ? `<button class="btn btn-ghost" style="padding:4px 8px;color:#999;" onclick="removeGenerationRule(${rule.id})">✕</button>` : ''}
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;${!rule.enabled ? 'opacity:0.5;pointer-events:none;' : ''}">
+                  <span style="font-size:12px;color:var(--text-secondary);">When</span>
+                  <select class="select" style="width:140px;" onchange="updateRuleField(${rule.id}, 'condition', this.value)">
+                    <option value="all" ${rule.condition === 'all' ? 'selected' : ''}>All posts</option>
+                    <option value="category" ${rule.condition === 'category' ? 'selected' : ''}>Category is</option>
+                    <option value="tag" ${rule.condition === 'tag' ? 'selected' : ''}>Tag is</option>
+                    <option value="post_type" ${rule.condition === 'post_type' ? 'selected' : ''}>Post type is</option>
+                    <option value="author" ${rule.condition === 'author' ? 'selected' : ''}>Author is</option>
+                  </select>
+                  ${rule.condition !== 'all' ? `
+                    <input type="text" class="input" value="${rule.conditionValue}" style="width:150px;" placeholder="${rule.condition === 'category' ? 'e.g., Technology' : rule.condition === 'tag' ? 'e.g., featured' : rule.condition === 'post_type' ? 'e.g., post' : 'e.g., admin'}" onchange="updateRuleField(${rule.id}, 'conditionValue', this.value)">
+                  ` : ''}
+                  <span style="font-size:12px;color:var(--text-secondary);">use</span>
+                  <select class="select" style="width:180px;" onchange="updateRuleField(${rule.id}, 'method', this.value)">
+                    ${generationMethods.map(m => `<option value="${m.value}" ${rule.method === m.value ? 'selected' : ''}>${m.label}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted);">
+            Rules are evaluated in order. The first matching rule will be applied.
+          </div>
         </div>
         <div class="setting-row" style="display:block;">
           <div class="setting-label mb-3">Maximum text length (characters)</div>
@@ -2620,27 +2756,6 @@
             </div>
           </div>
         `;
-      } else if (backgroundType === 'default') {
-        bgFieldHtml = `
-          <div class="bg-field-container">
-            <div class="upload-field">
-              <label class="form-label">Default Image</label>
-              <input type="file" id="default-image-upload" accept="image/*" style="display:none;" onchange="handleDefaultImageUpload(event)">
-              <button class="upload-btn" onclick="document.getElementById('default-image-upload').click()">
-                📁 Choose Default Image
-              </button>
-              ${defaultImageUrl ? `
-                <div class="thumbnail-display">
-                  <img src="${defaultImageUrl}" alt="Default image preview">
-                </div>
-              ` : `
-                <div class="thumbnail-display">
-                  No image selected
-                </div>
-              `}
-            </div>
-          </div>
-        `;
       }
 
       return `
@@ -2648,21 +2763,42 @@
           <div class="image-settings-content">
             <div class="mb-4">
           <div class="setting-label mb-3">Background Type</div>
+          <div class="setting-desc mb-3" style="font-size:12px;color:var(--text-muted);">Used when "Generate from title" or "Find or generate" generation methods are selected</div>
           <div class="radio-group">
             <label class="radio-option">
               <input type="radio" name="bg-type" value="color" ${backgroundType === 'color' ? 'checked' : ''} onclick="setBgType('color')">
               <span class="radio-label">Solid Color</span>
+              <span class="radio-desc">Use a single color as the image background</span>
             </label>
             <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
               <input type="radio" name="bg-type" value="image" ${backgroundType === 'image' ? 'checked' : ''} ${!isPro ? 'disabled' : ''} onclick="${!isPro ? '' : "setBgType('image')"}">
               <span class="radio-label">Background Image ${proBadge}</span>
-            </label>
-            <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
-              <input type="radio" name="bg-type" value="default" ${backgroundType === 'default' ? 'checked' : ''} ${!isPro ? 'disabled' : ''} onclick="${!isPro ? '' : "setBgType('default')"}">
-              <span class="radio-label">Default Image ${proBadge}</span>
+              <span class="radio-desc">Use a custom image as the background with text overlay</span>
             </label>
           </div>
           ${bgFieldHtml}
+        </div>
+
+        <div class="mb-4">
+          <div class="setting-label mb-3">Default Image</div>
+          <div class="setting-desc mb-3" style="font-size:12px;color:var(--text-muted);">Used when the "Use default image" generation method is selected</div>
+          ${defaultImageUrl ? `
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div style="width:200px;height:100px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);">
+                <img src="${defaultImageUrl}" style="width:100%;height:100%;object-fit:cover;">
+              </div>
+              <div>
+                <button class="btn btn-secondary" style="margin-bottom:8px;" onclick="selectDefaultImage()">Change Image</button>
+                <br>
+                <button class="btn btn-ghost" style="color:#dc2626;padding:6px 0;" onclick="removeDefaultImage()">Remove</button>
+              </div>
+            </div>
+          ` : `
+            <button class="btn btn-secondary" onclick="selectDefaultImage()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              Select from Media Library
+            </button>
+          `}
         </div>
 
         <div class="mb-4">
@@ -2870,9 +3006,9 @@
           <!-- Preview Panel -->
           <div class="preview-panel">
             <div class="preview-title">Live Preview</div>
-            <div id="live-preview-image" class="preview-image" style="background: ${backgroundType === 'color' ? bgColor : (backgroundType === 'image' && bgImageUrl ? `url(${bgImageUrl}) center/cover` : (backgroundType === 'default' && defaultImageUrl ? `url(${defaultImageUrl}) center/cover` : bgColor))}; display: flex; align-items: center; justify-content: center;">
+            <div id="live-preview-image" class="preview-image" style="background: ${backgroundType === 'color' ? bgColor : (backgroundType === 'image' && bgImageUrl ? `url(${bgImageUrl}) center/cover` : bgColor)}; display: flex; align-items: center; justify-content: center;">
               <span id="live-preview-text" style="font-family: ${fontFamily}; font-size: ${Math.min(fontSize, 28)}px; color: ${fontColor}; font-weight: bold; text-align: center; padding: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
-                ${(backgroundType === 'image' && bgImageUrl) || (backgroundType === 'default' && defaultImageUrl) ? '' : getPreviewText()}
+                ${(backgroundType === 'image' && bgImageUrl) ? '' : getPreviewText()}
               </span>
             </div>
             <div class="preview-meta">
