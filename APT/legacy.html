@@ -8,54 +8,95 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Primary lime green color scheme */
-      --primary: #7CB342;
-      --primary-dark: #689F38;
-      --primary-darker: #558B2F;
-      --primary-light: #9CCC65;
-      --primary-lighter: #DCEDC8;
-      --primary-bg: #F1F8E9;
+      /* Green (Main Brand Color) - Legacy style */
+      --primary: #8bc34a;
+      --primary-light: #8CC152;
+      --primary-text: #586549;
+      --primary-bg: #c9deb2;
+      --primary-disabled: #e2edd6;
+      --primary-muted: #a5b295;
 
-      /* UI colors */
-      --accent: #33691E;
-      --bg: #FAFAFA;
-      --sidebar-bg: #FFFFFF;
-      --card-bg: #FFFFFF;
+      /* Orange (Accent/Secondary) - Used for active menu items */
+      --orange: #d54e21;
+      --orange-text: #d54e21;
+      --orange-bg: #fdd599;
 
-      /* Text colors - good contrast ratios */
-      --text-primary: #1A1D21;
-      --text-secondary: #4B5563;
-      --text-muted: #6B7280;
+      /* Blue (Interactive Elements) - WordPress admin blue */
+      --blue: #0073aa;
+      --blue-border: #006799;
+      --blue-checked: #0073aa;
+
+      /* Gold/Yellow (Premium/CTA) */
+      --gold: #feeb80;
+      --gold-hover: #fef0a1;
+      --gold-active: #f8ba36;
+      --gold-shadow: #ffe8b2;
+      --gold-border: #d6a437;
+      --gold-text: #7c5d1b;
+      --gold-flash: #fffade;
+
+      /* Red (Alerts/PRO Badge) */
+      --pro-badge: #ff5722;
+      --error-border: red;
+      --error-bg: #ffe9e9;
+
+      /* Grays */
+      --white: #ffffff;
+      --gray-light: #f1f1f1;
+      --gray-lighter: #f3f3f3;
+      --gray-bg: #f1f1f1;
+      --gray-optgroup: #e4e4e4;
+      --gray-border: #ccc;
+      --gray-border-light: #e5e5e5;
+      --gray-shadow: #d8d8d8;
+      --gray-dashed: #cac9c9;
+      --gray-dark-shadow: #8e8d8d;
+      --gray-text: #777777;
+      --gray-chart: #afafaf;
+      --gray-inactive: #becbd2;
+      --black: #23282d;
+
+      /* UI colors - Legacy WordPress style */
+      --accent: #23282d;
+      --bg: #f1f1f1;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --header-bg: #23282d;
+
+      /* Text colors */
+      --text-primary: #23282d;
+      --text-secondary: #666666;
+      --text-muted: #999999;
 
       /* Border colors */
-      --border: #E5E7EB;
-      --border-light: #F3F4F6;
+      --border: #e5e5e5;
+      --border-light: #e5e5e5;
 
-      /* Shadows */
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+      /* Shadows - Minimal for legacy look */
+      --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 1px 1px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 1px 1px rgba(0, 0, 0, 0.04);
 
-      /* Border radius */
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
-      --radius-xl: 16px;
-      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      /* Border radius - Legacy uses minimal rounding */
+      --radius-sm: 3px;
+      --radius-md: 3px;
+      --radius-lg: 4px;
+      --radius-xl: 4px;
+      --transition: all 0.15s ease;
 
-      /* Tag colors - good contrast */
-      --tag-green-bg: #F1F8E9;
-      --tag-green-text: #558B2F;
-      --tag-green-border: #C5E1A5;
-      --tag-blue-bg: #E3F2FD;
-      --tag-blue-text: #1565C0;
-      --tag-blue-border: #90CAF9;
-      --tag-orange-bg: #FFF3E0;
-      --tag-orange-text: #E65100;
-      --tag-orange-border: #FFCC80;
-      --tag-red-bg: #FFEBEE;
-      --tag-red-text: #C62828;
-      --tag-red-border: #EF9A9A;
+      /* Tag colors */
+      --tag-green-bg: #e2edd6;
+      --tag-green-text: #586549;
+      --tag-green-border: #8CC152;
+      --tag-blue-bg: #e8f5fa;
+      --tag-blue-text: #0074a2;
+      --tag-blue-border: #33aad5;
+      --tag-orange-bg: #fdd599;
+      --tag-orange-text: #a57b3c;
+      --tag-orange-border: #ff7600;
+      --tag-red-bg: #ffe9e9;
+      --tag-red-text: #ff5722;
+      --tag-red-border: #ff5722;
     }
 
     * {
@@ -72,47 +113,38 @@
       line-height: 1.5;
     }
 
+    /* Global form element colors - blue */
+    input[type="radio"],
+    input[type="checkbox"] {
+      accent-color: #0073aa;
+    }
+
     .flex {
       display: flex;
     }
 
-    /* Sidebar - Clean text-based style */
+    /* Sidebar - Legacy WordPress style */
     .sidebar {
-      width: 220px;
+      width: 160px;
       background: var(--sidebar-bg);
-      min-height: 100vh;
-      padding: 24px 0;
+      min-height: calc(100vh - 45px);
+      padding: 0;
       display: flex;
       flex-direction: column;
-    }
-
-    .sidebar-header {
-      padding: 0 20px 24px;
-    }
-
-    .sidebar-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.3;
-    }
-
-    .sidebar-version {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 2px;
+      border-right: 1px solid #e5e5e5;
     }
 
     .sidebar nav {
       flex: 1;
+      padding-top: 10px;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       width: 100%;
-      padding: 12px 20px;
+      padding: 10px 12px;
       border: none;
       background: none;
       text-align: left;
@@ -123,48 +155,88 @@
     }
 
     .nav-item:hover {
-      background: var(--border-light);
+      background: #f3f3f3;
     }
 
     .nav-item.active {
-      background: linear-gradient(90deg, var(--primary-bg) 0%, transparent 100%);
-      border-left-color: var(--primary);
+      background: transparent;
+      border-left-color: var(--orange);
+    }
+
+    .nav-item.active .nav-label {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    .nav-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
     }
 
     .nav-icon {
-      font-size: 20px;
-      color: var(--text-muted);
-      width: 20px;
+      width: 18px;
+      height: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #82878c;
+      flex-shrink: 0;
+    }
+
+    .nav-icon svg {
+      width: 18px;
+      height: 18px;
     }
 
     .nav-item.active .nav-icon {
-      color: var(--primary);
+      color: var(--orange);
     }
 
     .nav-label {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.3;
     }
 
     .nav-sub {
       font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 1px;
+      color: #666;
+      font-weight: 400;
+      text-transform: none;
+      line-height: 1.2;
+    }
+
+    .nav-item.sub-item {
+      padding-left: 38px;
+      border-left: none;
+    }
+
+    .nav-item.sub-item .nav-label {
+      font-size: 12px;
+      font-weight: 400;
+      text-transform: none;
+      color: #666;
+    }
+
+    .nav-item.sub-item:hover .nav-label,
+    .nav-item.sub-item.active .nav-label {
+      color: var(--orange);
     }
 
     /* Main Content */
     .main {
       flex: 1;
-      padding: 28px 32px;
-      max-width: calc(100% - 220px);
+      padding: 20px;
+      max-width: calc(100% - 160px);
+      background: var(--bg);
     }
 
     .page-header {
-      margin-bottom: 24px;
+      display: none;
     }
 
     .page-title {
@@ -186,77 +258,25 @@
       color: var(--text-secondary);
     }
 
-    /* Quick Actions Cards */
+    /* Quick Actions Cards - Hidden in legacy style */
     .quick-actions {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 24px;
+      display: none;
     }
 
     .action-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      cursor: pointer;
-      transition: var(--transition);
-    }
-
-    .action-card:hover {
-      box-shadow: var(--shadow-md);
-      border-color: var(--border);
-    }
-
-    .action-card.primary {
-      background: var(--primary);
-      border-color: var(--primary);
-      flex: 1;
-      max-width: 360px;
-    }
-
-    .action-card.primary:hover {
-      background: var(--primary-dark);
-      border-color: var(--primary-dark);
+      display: none;
     }
 
     .action-card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-    }
-
-    .action-card:not(.primary) .action-card-icon {
-      background: var(--border-light);
-      color: var(--accent);
+      display: none;
     }
 
     .action-card-content h3 {
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-      margin-bottom: 2px;
-    }
-
-    .action-card:not(.primary) .action-card-content h3 {
-      color: var(--accent);
+      display: none;
     }
 
     .action-card-content p {
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.85);
-    }
-
-    .action-card:not(.primary) .action-card-content p {
-      color: var(--text-muted);
+      display: none;
     }
 
     /* Recent Activity */
@@ -345,38 +365,39 @@
       border-color: var(--tag-red-border);
     }
 
-    /* Cards */
+    /* Cards - Legacy WordPress style */
     .card {
       background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
+      border-radius: 0;
+      box-shadow: 0 1px 1px rgba(0,0,0,.04);
       margin-bottom: 20px;
-      border: 1px solid var(--border);
+      border: 1px solid #e5e5e5;
       overflow: hidden;
     }
 
     .card-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
+      padding: 12px 15px;
+      border-bottom: 1px solid #e5e5e5;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: #fafafa;
     }
 
     .card-title {
       font-weight: 600;
-      font-size: 16px;
-      color: var(--text-primary);
+      font-size: 14px;
+      color: #23282d;
     }
 
     .card-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
+      font-size: 12px;
+      color: #666;
       margin-top: 2px;
     }
 
     .card-body {
-      padding: 24px;
+      padding: 15px;
     }
 
     /* Buttons */
@@ -395,26 +416,35 @@
     }
 
     .btn-primary {
-      background: var(--accent);
+      background: var(--primary);
       color: white;
-      box-shadow: 0 2px 4px rgba(31, 41, 55, 0.2);
+      box-shadow: none;
+      border: 1px solid #7bad3a;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.3px;
     }
 
     .btn-primary:hover {
-      background: #374151;
-      box-shadow: 0 4px 8px rgba(31, 41, 55, 0.3);
-      transform: translateY(-1px);
+      background: #7bad3a;
+      box-shadow: none;
+      transform: none;
     }
 
     .btn-secondary {
-      background: var(--border-light);
-      color: var(--text-secondary);
-      border: 1px solid var(--border);
+      background: #f7f7f7;
+      color: #555;
+      border: 1px solid #ccc;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.3px;
     }
 
     .btn-secondary:hover {
-      background: var(--border);
-      color: var(--text-primary);
+      background: #e5e5e5;
+      color: #23282d;
+      border-color: #999;
     }
 
     .btn-danger {
@@ -445,48 +475,49 @@
       padding: 3px 8px;
       font-size: 10px;
       font-weight: 700;
-      background: var(--primary);
+      background: var(--pro-badge);
       color: white;
       border-radius: 4px;
       margin-left: 8px;
       letter-spacing: 0.5px;
-      box-shadow: 0 1px 3px rgba(124, 179, 66, 0.3);
+      box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4);
       position: relative;
       z-index: 1;
     }
 
-    /* Form Elements */
+    /* Form Elements - Legacy WordPress style */
     .input,
     .select {
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-size: 14px;
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 13px;
       width: 100%;
       font-family: inherit;
       transition: var(--transition);
-      background: var(--card-bg);
-      color: var(--text-primary);
+      background: #fff;
+      color: #32373c;
+      line-height: 1.4;
     }
 
     .select {
       cursor: pointer;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239AA0A6' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 40px;
+      background-position: right 8px center;
+      padding-right: 30px;
     }
 
     .input:focus,
     .select:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.15);
+      border-color: #5b9dd9;
+      box-shadow: 0 0 2px rgba(30, 140, 190, 0.8);
     }
 
     .input::placeholder {
-      color: var(--text-muted);
+      color: #a0a5aa;
     }
 
     /* Tabs */
@@ -520,7 +551,7 @@
     }
 
     .tab.active {
-      color: var(--primary-darker);
+      color: var(--primary-text);
       border-bottom-color: var(--primary);
       background: var(--card-bg);
     }
@@ -567,7 +598,7 @@
     .toggle {
       width: 44px;
       height: 24px;
-      background: var(--border);
+      background: #ccc;
       border-radius: 12px;
       position: relative;
       cursor: pointer;
@@ -576,7 +607,7 @@
     }
 
     .toggle.on {
-      background: var(--primary);
+      background: #0073aa;
     }
 
     .toggle::after {
@@ -597,7 +628,7 @@
     }
 
     .toggle:hover {
-      box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.15);
+      box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.15);
     }
 
     /* Pro Locked Section - Simple Style */
@@ -613,18 +644,21 @@
       position: absolute;
       top: 12px;
       right: 12px;
-      background: var(--primary);
+      background: var(--pro-badge);
       color: white;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
       border-radius: 4px;
       z-index: 10;
       cursor: pointer;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      box-shadow: 0 1px 3px rgba(255, 87, 34, 0.4);
     }
 
     .pro-locked-section .pro-label:hover {
-      background: var(--primary-dark);
+      background: #e64a19;
     }
 
     .pro-locked-section .section-title {
@@ -664,14 +698,14 @@
 
     .lock-overlay:hover .lock-box {
       transform: scale(1.03);
-      box-shadow: 0 8px 24px rgba(124, 179, 66, 0.35);
+      box-shadow: 0 8px 24px rgba(255, 87, 34, 0.35);
     }
 
     .lock-box {
-      background: var(--primary);
+      background: var(--pro-badge);
       padding: 14px 24px;
       border-radius: var(--radius-md);
-      box-shadow: 0 4px 16px rgba(124, 179, 66, 0.3);
+      box-shadow: 0 4px 16px rgba(255, 87, 34, 0.3);
       font-size: 14px;
       font-weight: 700;
       color: white;
@@ -684,7 +718,7 @@
     .lock-hint {
       margin-top: 12px;
       font-size: 12px;
-      color: var(--primary-darker);
+      color: #c43e00;
       font-weight: 500;
     }
 
@@ -697,8 +731,8 @@
     }
 
     .btn-option.pro-locked:hover {
-      border-color: var(--primary);
-      background: #F0F4EC;
+      border-color: var(--pro-badge);
+      background: #fff5f2;
       transform: translateY(-1px);
     }
 
@@ -765,14 +799,15 @@
       position: absolute;
       top: -6px;
       right: calc(100% - 280px + 8px);
-      background: var(--primary);
+      background: var(--pro-badge);
       color: white;
       font-size: 9px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 2px 5px;
       border-radius: 3px;
       letter-spacing: 0.3px;
       z-index: 10;
+      text-transform: uppercase;
     }
 
     .date-range {
@@ -836,7 +871,7 @@
     .progress-value {
       font-size: 32px;
       font-weight: 700;
-      color: var(--primary-darker);
+      color: var(--primary-text);
     }
 
     .progress-label {
@@ -873,7 +908,7 @@
     .btn-option.active {
       border-color: var(--primary);
       background: var(--primary-bg);
-      color: var(--primary-darker);
+      color: var(--primary-text);
     }
 
     .btn-option.disabled {
@@ -881,17 +916,73 @@
       cursor: pointer;
     }
 
+    /* Radio Button Groups */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      background: white;
+    }
+
+    .radio-option:hover {
+      border-color: var(--primary-light);
+      background: var(--primary-bg);
+    }
+
+    .radio-option input[type="radio"] {
+      margin: 0;
+      cursor: pointer;
+      accent-color: #0073aa;
+      width: 16px;
+      height: 16px;
+    }
+
+    .radio-option input[type="radio"]:checked + .radio-label {
+      color: #0073aa;
+      font-weight: 600;
+    }
+
+    .radio-option.pro-locked {
+      opacity: 0.7;
+      background: var(--border-light);
+    }
+
+    .radio-option.pro-locked:hover {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .radio-label {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
     /* Upgrade Bar */
     .upgrade-bar {
-      background: #F0F4EC;
-      border: 1px solid #C5E1A5;
+      background: var(--primary-bg);
+      border: 1px solid var(--primary-light);
       padding: 14px 20px;
       margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-size: 13px;
-      color: var(--primary-darker);
+      color: var(--primary-text);
       border-radius: var(--radius-md);
     }
 
@@ -911,11 +1002,11 @@
       background: var(--primary);
       color: white;
       border: none;
-      box-shadow: 0 2px 4px rgba(124, 179, 66, 0.3);
+      box-shadow: 0 2px 4px rgba(0, 99, 3, 0.3);
     }
 
     .upgrade-bar .btn:hover {
-      background: var(--primary-dark);
+      background: var(--primary-text);
     }
 
     .btn-dismiss {
@@ -923,7 +1014,7 @@
       border: none;
       padding: 6px;
       cursor: pointer;
-      color: var(--primary-darker);
+      color: var(--primary-text);
       border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
@@ -932,8 +1023,8 @@
     }
 
     .btn-dismiss:hover {
-      background: rgba(124, 179, 66, 0.15);
-      color: var(--primary-dark);
+      background: rgba(0, 99, 3, 0.15);
+      color: var(--primary-text);
     }
 
     /* Modal */
@@ -1021,7 +1112,7 @@
 
     .delete-option input[type="radio"] {
       margin-top: 2px;
-      accent-color: var(--primary);
+      accent-color: #0073aa;
     }
 
     .delete-option-content h4 {
@@ -1151,14 +1242,14 @@
     }
 
     .link {
-      color: var(--primary-darker);
+      color: #0073aa;
       text-decoration: none;
       font-weight: 500;
       transition: var(--transition);
     }
 
     .link:hover {
-      color: var(--primary-dark);
+      color: #006799;
       text-decoration: underline;
     }
 
@@ -1356,13 +1447,13 @@
     .license-check {
       width: 56px;
       height: 56px;
-      background: var(--primary-lighter);
+      background: var(--primary-disabled);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 24px;
-      color: var(--primary-darker);
+      color: var(--primary-text);
     }
 
     .license-badge {
@@ -1387,7 +1478,7 @@
       align-items: center;
       gap: 8px;
       font-size: 13px;
-      color: var(--primary-darker);
+      color: var(--primary-text);
     }
 
     .feature-item::before {
@@ -1467,7 +1558,7 @@
     }
 
     .upload-btn:hover {
-      background: var(--primary-dark);
+      background: var(--primary-text);
     }
 
     .thumbnail-display {
@@ -1583,7 +1674,7 @@
       padding: 16px;
       background: var(--primary-bg);
       border-radius: var(--radius-md);
-      border: 1px solid var(--primary-lighter);
+      border: 1px solid var(--primary-disabled);
     }
 
     .pro-tips-header {
@@ -1592,7 +1683,7 @@
       gap: 8px;
       font-size: 13px;
       font-weight: 600;
-      color: var(--primary-darker);
+      color: var(--primary-text);
       margin-bottom: 10px;
     }
 
@@ -1604,7 +1695,7 @@
 
     .pro-tips-list li {
       font-size: 12px;
-      color: var(--primary-darker);
+      color: var(--primary-text);
       margin-bottom: 6px;
       padding-left: 8px;
       position: relative;
@@ -1710,17 +1801,68 @@
       border-radius: 4px;
       font-weight: 500;
     }
+
+    /* Legacy Header Bar */
+    .header-bar {
+      background: #23282d;
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13px;
+      border-bottom: 1px solid #32373c;
+    }
+
+    .header-bar-title {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .header-bar-subtitle {
+      color: #eee;
+      padding-left: 20px;
+      border-left: 1px solid #444;
+    }
+
+    .header-bar-subtitle span {
+      color: #fff;
+    }
+
+    .header-bar-actions {
+      margin-left: auto;
+    }
+
+    .btn-save {
+      background: #8bc34a;
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 3px;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-save:hover {
+      background: #7bad3a;
+    }
   </style>
 </head>
 
 <body>
+  <!-- Legacy Header Bar -->
+  <div class="header-bar">
+    <div class="header-bar-title">Auto Featured Image 4.2.2</div>
+    <div class="header-bar-subtitle">— &nbsp;Page: <span id="header-page-name">Generate images</span></div>
+    <div class="header-bar-actions" id="header-actions"></div>
+  </div>
+
   <div class="flex">
     <!-- Sidebar -->
     <div class="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title">Auto Featured Image</div>
-        <div class="sidebar-version">Version 4.2.2</div>
-      </div>
       <nav id="nav"></nav>
     </div>
 
@@ -1800,7 +1942,7 @@
     const navItems = [
       { id: 'generate', label: 'Generate Images', sub: 'Create featured images', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>' },
       { id: 'settings', label: 'Settings', sub: 'Configure options', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>' },
-      { id: 'logs', label: 'Activity Logs', sub: 'View debug reports', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>' },
+      { id: 'logs', label: 'Plugin Logs', sub: 'Debug information', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>' },
       { id: 'license', label: 'License', sub: 'Activate Pro version', icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>' }
     ];
 
@@ -1808,6 +1950,7 @@
       { value: 'title', label: 'Generate from title' },
       { value: 'find', label: 'Find in post' },
       { value: 'find_generate', label: 'Find or generate' },
+      { value: 'video', label: 'Video thumbnail' },
       { value: 'google', label: 'Google search' },
       { value: 'find_google', label: 'Find or Google' },
       { value: 'default', label: 'Use default image' },
@@ -1823,7 +1966,7 @@
       document.getElementById('nav').innerHTML = navItems.map(item => `
         <button class="nav-item ${currentPage === item.id ? 'active' : ''}" onclick="navigate('${item.id}')">
           <span class="nav-icon">${item.icon}</span>
-          <div>
+          <div class="nav-text">
             <div class="nav-label">${item.label}</div>
             <div class="nav-sub">${item.sub}</div>
           </div>
@@ -1836,6 +1979,26 @@
       const pageInfo = navItems.find(n => n.id === page);
       document.getElementById('page-title').textContent = pageInfo?.label || page;
       document.getElementById('page-subtitle').textContent = pageInfo?.sub || '';
+
+      // Update header page name
+      const pageNames = {
+        'generate': 'Generate images',
+        'settings': 'Settings',
+        'logs': 'Plugin Logs',
+        'license': 'License',
+        'about': 'About',
+        'components': 'Components'
+      };
+      document.getElementById('header-page-name').textContent = pageNames[page] || page;
+
+      // Show save button on settings page
+      const headerActions = document.getElementById('header-actions');
+      if (page === 'settings') {
+        headerActions.innerHTML = '<button class="btn-save">Save</button>';
+      } else {
+        headerActions.innerHTML = '';
+      }
+
       render();
     }
 
@@ -2163,6 +2326,7 @@
         'title': 'Create from the title on a colored background',
         'find': 'Find an existing image within the post content',
         'find_generate': 'Try to find in post, otherwise generate from title',
+        'video': 'Fetch thumbnail from embedded videos (YouTube, Vimeo, etc.)',
         'google': 'Search Google Images for relevant images',
         'find_google': 'Try to find in post, otherwise search Google',
         'default': 'Use a default placeholder image',
@@ -2190,7 +2354,7 @@
                 </div>
               </div>
               <p style="margin-top:16px;font-size:13px;color:var(--text-muted);text-align:center;">
-                <strong style="color:var(--primary-darker);">${progressPct}%</strong> of your posts have a<br>featured image
+                <strong style="color:var(--primary-text);">${progressPct}%</strong> of your posts have a<br>featured image
               </p>
             </div>
             <div class="action-content">
@@ -2275,7 +2439,7 @@
               <div class="card-title">Generation Log</div>
               <div class="card-subtitle">Shows the last 100 generated images</div>
             </div>
-            <button class="btn btn-ghost">View All</button>
+            <button class="btn btn-ghost" onclick="navigate('logs')">View Debug Logs</button>
           </div>
           ${generationLogs.length > 0 ? `
           <table class="table">
@@ -2343,7 +2507,7 @@
             <div class="setting-label">Add featured image when saving a post</div>
             <div class="setting-desc">Automatically add featured image when saving</div>
           </div>
-          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="setting-row">
           <div>
@@ -2357,6 +2521,11 @@
           <select class="select" style="width:240px;">
             ${methodOptions}
           </select>
+        </div>
+        <div class="setting-row" style="display:block;">
+          <div class="setting-label mb-3">Maximum text length (characters)</div>
+          <div class="setting-desc mb-3">Limit the number of characters used from post title</div>
+          <input type="number" class="input" value="50" min="10" max="200" style="width:120px;">
         </div>
         <div class="setting-row" style="display:block;">
           <div class="setting-label mb-3">Generate for post types</div>
@@ -2479,19 +2648,34 @@
           <div class="image-settings-content">
             <div class="mb-4">
           <div class="setting-label mb-3">Background Type</div>
-          <div class="btn-group">
-            <button class="btn-option ${backgroundType === 'color' ? 'active' : ''}" onclick="setBgType('color')">Color</button>
-            <button class="btn-option ${backgroundType === 'image' ? 'active' : ''} ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : "setBgType('image')"}">Image ${proBadge}</button>
-            <button class="btn-option ${backgroundType === 'default' ? 'active' : ''}" onclick="setBgType('default')">Default</button>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="bg-type" value="color" ${backgroundType === 'color' ? 'checked' : ''} onclick="setBgType('color')">
+              <span class="radio-label">Solid Color</span>
+            </label>
+            <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
+              <input type="radio" name="bg-type" value="image" ${backgroundType === 'image' ? 'checked' : ''} ${!isPro ? 'disabled' : ''} onclick="${!isPro ? '' : "setBgType('image')"}">
+              <span class="radio-label">Background Image ${proBadge}</span>
+            </label>
+            <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
+              <input type="radio" name="bg-type" value="default" ${backgroundType === 'default' ? 'checked' : ''} ${!isPro ? 'disabled' : ''} onclick="${!isPro ? '' : "setBgType('default')"}">
+              <span class="radio-label">Default Image ${proBadge}</span>
+            </label>
           </div>
           ${bgFieldHtml}
         </div>
 
         <div class="mb-4">
           <div class="setting-label mb-3">Image Format</div>
-          <div class="btn-group">
-            <button class="btn-option ${imageFormat === 'jpeg' ? 'active' : ''}" onclick="updateImageFormat('jpeg')">JPEG</button>
-            <button class="btn-option ${imageFormat === 'png' ? 'active' : ''}" onclick="updateImageFormat('png')">PNG</button>
+          <div class="radio-group">
+            <label class="radio-option">
+              <input type="radio" name="image-format" value="jpeg" ${imageFormat === 'jpeg' ? 'checked' : ''} onclick="updateImageFormat('jpeg')">
+              <span class="radio-label">JPEG (Smaller file size, good for photos)</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="image-format" value="png" ${imageFormat === 'png' ? 'checked' : ''} onclick="updateImageFormat('png')">
+              <span class="radio-label">PNG (Better quality, supports transparency)</span>
+            </label>
           </div>
         </div>
 
@@ -2507,11 +2691,26 @@
         </div>
 
         <div class="mb-4">
+          <label class="form-label">Image Padding (px)</label>
+          <div class="setting-desc mb-3" style="font-size:12px;color:var(--text-muted);">Space between text and image edges</div>
+          <input type="number" value="40" min="0" max="200" class="input" style="width:120px;">
+        </div>
+
+        <div class="mb-4">
           <div class="setting-label mb-3">Font Source</div>
-          <div class="btn-group mb-4">
-            <button class="btn-option active">Preset</button>
-            <button class="btn-option ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : ''}">Google Font ${proBadge}</button>
-            <button class="btn-option ${!isPro ? 'pro-locked' : ''}" onclick="${!isPro ? "navigate('license')" : ''}">Upload Font ${proBadge}</button>
+          <div class="radio-group mb-4">
+            <label class="radio-option">
+              <input type="radio" name="font-source" value="preset" checked>
+              <span class="radio-label">System Fonts</span>
+            </label>
+            <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
+              <input type="radio" name="font-source" value="google" ${!isPro ? 'disabled' : ''}>
+              <span class="radio-label">Google Fonts ${proBadge}</span>
+            </label>
+            <label class="radio-option ${!isPro ? 'pro-locked' : ''}" ${!isPro ? `onclick="navigate('license')"` : ''}>
+              <input type="radio" name="font-source" value="upload" ${!isPro ? 'disabled' : ''}>
+              <span class="radio-label">Custom Upload ${proBadge}</span>
+            </label>
           </div>
           <select class="select" style="width:220px;" onchange="updateFontFamily(this.value)">
             <option ${fontFamily === 'Arial' ? 'selected' : ''}>Arial</option>
@@ -2541,7 +2740,36 @@
               <option value="none" ${textTransform === 'none' ? 'selected' : ''}>None</option>
               <option value="uppercase" ${textTransform === 'uppercase' ? 'selected' : ''}>UPPERCASE</option>
               <option value="lowercase" ${textTransform === 'lowercase' ? 'selected' : ''}>lowercase</option>
+              <option value="capitalize" ${textTransform === 'capitalize' ? 'selected' : ''}>Capitalize</option>
             </select>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-4">
+          <div>
+            <label class="form-label">Text Length (characters)</label>
+            <input type="number" value="50" min="10" max="200" class="input">
+          </div>
+          <div>
+            <label class="form-label">Line Spacing</label>
+            <input type="number" value="1.5" min="0.5" max="3" step="0.1" class="input">
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="setting-row" style="border:none;padding:0;">
+            <div>
+              <div class="setting-label">Use Text Shadow</div>
+              <div class="setting-desc">Add shadow effect to text for better readability</div>
+            </div>
+            <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div style="margin-top:12px;">
+            <label class="form-label">Shadow Color</label>
+            <div style="display:flex;gap:8px;">
+              <input type="color" value="#FFFFFF" style="width:40px;height:38px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;">
+              <input type="text" value="#FFFFFF" class="input" style="flex:1;">
+            </div>
           </div>
         </div>
 
@@ -2549,10 +2777,10 @@
         <div class="pro-locked-section">
           <span class="pro-label" onclick="navigate('license')">Pro</span>
           <div class="pro-locked-content">
-            <div class="section-title" style="margin-bottom:16px;">Layout & Text Additions</div>
+            <div class="section-title" style="margin-bottom:16px;">Alignment & Padding</div>
             <div class="grid-2">
               <div class="form-group">
-                <label class="form-label">Horizontal Align</label>
+                <label class="form-label">Horizontal Alignment</label>
                 <select class="select" disabled>
                   <option>Left</option>
                   <option selected>Center</option>
@@ -2560,7 +2788,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label">Vertical Align</label>
+                <label class="form-label">Vertical Alignment</label>
                 <select class="select" disabled>
                   <option>Top</option>
                   <option selected>Center</option>
@@ -2568,22 +2796,35 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="form-label">Text Before</label>
-                <input type="text" class="input" placeholder="Prefix..." disabled>
+                <label class="form-label">Top/Bottom Padding (px)</label>
+                <input type="number" class="input" value="15" disabled>
               </div>
               <div class="form-group">
-                <label class="form-label">Text After</label>
-                <input type="text" class="input" placeholder="Suffix..." disabled>
+                <label class="form-label">Left/Right Padding (px)</label>
+                <input type="number" class="input" value="15" disabled>
+              </div>
+            </div>
+            <div class="section-title" style="margin:20px 0 16px;">Addition of Text</div>
+            <div class="grid-2">
+              <div class="form-group">
+                <label class="form-label">String Before Text</label>
+                <input type="text" class="input" placeholder="e.g., hola" disabled>
+                <div class="setting-desc" style="margin-top:6px;font-size:11px;">Use [br] for line break</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">String After Text</label>
+                <input type="text" class="input" placeholder="e.g., bye" disabled>
+                <div class="setting-desc" style="margin-top:6px;font-size:11px;">Use [br] for line break</div>
               </div>
             </div>
           </div>
         </div>
         ` : `
         <div class="section" style="background:white;">
-          <div class="section-title">Layout & Text Additions</div>
+          <div class="section-title">Alignment & Padding</div>
           <div class="grid-2">
             <div class="form-group">
-              <label class="form-label">Horizontal Align</label>
+              <label class="form-label">Horizontal Alignment</label>
               <select class="select">
                 <option>Left</option>
                 <option selected>Center</option>
@@ -2591,7 +2832,7 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Vertical Align</label>
+              <label class="form-label">Vertical Alignment</label>
               <select class="select">
                 <option>Top</option>
                 <option selected>Center</option>
@@ -2599,12 +2840,27 @@
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Text Before</label>
-              <input type="text" class="input" placeholder="Prefix...">
+              <label class="form-label">Top/Bottom Padding (px)</label>
+              <input type="number" class="input" value="15">
             </div>
             <div class="form-group">
-              <label class="form-label">Text After</label>
-              <input type="text" class="input" placeholder="Suffix...">
+              <label class="form-label">Left/Right Padding (px)</label>
+              <input type="number" class="input" value="15">
+            </div>
+          </div>
+        </div>
+        <div class="section" style="background:white;margin-top:20px;">
+          <div class="section-title">Addition of Text</div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">String Before Text</label>
+              <input type="text" class="input" placeholder="e.g., hola" value="hola">
+              <div class="setting-desc" style="margin-top:6px;font-size:11px;">Use [br] for line break</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">String After Text</label>
+              <input type="text" class="input" placeholder="e.g., bye" value="bye">
+              <div class="setting-desc" style="margin-top:6px;font-size:11px;">Use [br] for line break</div>
             </div>
           </div>
         </div>
@@ -2689,7 +2945,7 @@
     function renderApiSettings() {
       return `
         <div class="section" style="background:white;">
-          <div class="section-title">🔍 Google Custom Search</div>
+          <div class="section-title">Google Custom Search</div>
           <div class="grid-2">
             <div class="form-group" style="margin:0;">
               <label class="form-label">API Key</label>
@@ -2740,7 +2996,7 @@
         </div>
         ` : `
         <div class="section" style="background:white;">
-          <div class="section-title">📷 Pixabay</div>
+          <div class="section-title">Pixabay</div>
           <div class="form-group" style="margin:0;">
             <label class="form-label">API Key</label>
             <input type="text" class="input" placeholder="Enter API Key">
@@ -2748,7 +3004,7 @@
         </div>
 
         <div class="section" style="background:white;">
-          <div class="section-title">🖼️ Unsplash</div>
+          <div class="section-title">Unsplash</div>
           <div class="form-group" style="margin:0;">
             <label class="form-label">Access Key</label>
             <input type="text" class="input" placeholder="Enter Access Key">
@@ -2756,7 +3012,7 @@
         </div>
 
         <div class="section" style="background:white;">
-          <div class="section-title">🤖 IBM Watson</div>
+          <div class="section-title">IBM Watson</div>
           <div class="grid-2">
             <div class="form-group" style="margin:0;">
               <label class="form-label">API Key</label>
@@ -2773,22 +3029,23 @@
     }
 
     function renderLogsPage() {
-      // Create dynamic log entries from generation logs
-      const dynamicLogs = generationLogs.flatMap(log => [
-        { time: log.time, level: 'success', message: `Featured image generated for "${log.title}" using ${log.method.toLowerCase()}` },
-        { time: log.time, level: 'info', message: `Processing post ID ${log.id}: ${log.title}` }
-      ]);
-
-      const staticLogs = [
-        { time: '2024-01-15 14:28:03', level: 'warning', message: 'Post "Test Draft" skipped - already has featured image' },
-        { time: '2024-01-15 14:20:00', level: 'info', message: 'Batch generation started - 3 posts queued' },
-        { time: '2024-01-15 10:15:33', level: 'error', message: 'Failed to generate image for "Old Post" - GD library error' },
-        { time: '2024-01-15 10:15:32', level: 'info', message: 'Processing post ID 98: Old Post' },
-        { time: '2024-01-14 16:45:20', level: 'info', message: 'Settings updated: Generation method changed to "title"' },
-        { time: '2024-01-14 09:00:01', level: 'info', message: 'CRON job executed - no posts without featured image' },
+      // Create PHP debug log entries
+      const debugLogs = [
+        { time: '2024-01-15 14:28:03', level: 'debug', message: 'afi_generate_image() called for post_id: 156' },
+        { time: '2024-01-15 14:28:03', level: 'debug', message: 'Post data: Array ( [ID] => 156 [post_title] => "Sample Post Title" [post_type] => "post" )' },
+        { time: '2024-01-15 14:28:04', level: 'debug', message: 'Image settings: Array ( [width] => 1200 [height] => 630 [format] => "jpeg" [bg_color] => "#3498db" )' },
+        { time: '2024-01-15 14:28:05', level: 'success', message: 'Image generated successfully: wp-content/uploads/2024/01/featured-156.jpg' },
+        { time: '2024-01-15 14:20:00', level: 'info', message: 'afi_batch_generate() - Processing 3 posts' },
+        { time: '2024-01-15 14:20:01', level: 'debug', message: 'Query args: Array ( [post_type] => "post" [posts_per_page] => 100 [meta_query] => Array ( ... ) )' },
+        { time: '2024-01-15 10:15:33', level: 'error', message: 'GD Library Error: imagecreatetruecolor() failed for dimensions 1200x630' },
+        { time: '2024-01-15 10:15:33', level: 'debug', message: 'PHP Memory: 45MB / 128MB - Peak: 48MB' },
+        { time: '2024-01-14 16:45:20', level: 'info', message: 'Settings saved: Array ( [generation_method] => "title" [auto_generate] => true )' },
+        { time: '2024-01-14 16:45:20', level: 'debug', message: 'update_option() called: afi_settings' },
+        { time: '2024-01-14 09:00:01', level: 'debug', message: 'CRON: afi_scheduled_generation executed' },
+        { time: '2024-01-14 09:00:02', level: 'debug', message: 'Posts without featured image: 0' },
       ];
 
-      const logEntries = [...dynamicLogs, ...staticLogs].slice(0, 20);
+      const logEntries = debugLogs;
 
       const logsHtml = logEntries.map(log => `
         <div class="log-entry">
@@ -2802,8 +3059,8 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Debug Logs</div>
-              <div class="card-subtitle">View plugin activity and troubleshoot issues</div>
+              <div class="card-title">Plugin Logs</div>
+              <div class="card-subtitle">PHP debug output and error information</div>
             </div>
             <div class="logs-info">
               <span>Log size:</span>
@@ -2872,8 +3129,8 @@
               <button class="btn-option" style="width:100%;font-family:monospace;font-size:12px;" onclick="setLicenseKey('AFI-BUS-ABCD-EFGH')">AFI-BUS-ABCD-EFGH</button>
             </div>
 
-            <div style="margin-top:24px;padding:20px;background:#F0F4EC;border:1px solid #C5E1A5;border-radius:var(--radius-md);">
-              <h4 style="font-size:14px;color:var(--primary-darker);margin-bottom:12px;font-weight:600;">Pro Features Include:</h4>
+            <div style="margin-top:24px;padding:20px;background:#F0F4EC;border:1px solid var(--primary-light);border-radius:var(--radius-md);">
+              <h4 style="font-size:14px;color:var(--primary-text);margin-bottom:12px;font-weight:600;">Pro Features Include:</h4>
               <div class="features-grid">
                 <div class="feature-item">Auto Image Import</div>
                 <div class="feature-item">Background Images</div>
