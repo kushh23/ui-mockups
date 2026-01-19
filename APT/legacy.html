@@ -3029,60 +3029,51 @@
     }
 
     function renderLogsPage() {
-      // Create PHP debug log entries
-      const debugLogs = [
-        { time: '2024-01-15 14:28:03', level: 'debug', message: 'afi_generate_image() called for post_id: 156' },
-        { time: '2024-01-15 14:28:03', level: 'debug', message: 'Post data: Array ( [ID] => 156 [post_title] => "Sample Post Title" [post_type] => "post" )' },
-        { time: '2024-01-15 14:28:04', level: 'debug', message: 'Image settings: Array ( [width] => 1200 [height] => 630 [format] => "jpeg" [bg_color] => "#3498db" )' },
-        { time: '2024-01-15 14:28:05', level: 'success', message: 'Image generated successfully: wp-content/uploads/2024/01/featured-156.jpg' },
-        { time: '2024-01-15 14:20:00', level: 'info', message: 'afi_batch_generate() - Processing 3 posts' },
-        { time: '2024-01-15 14:20:01', level: 'debug', message: 'Query args: Array ( [post_type] => "post" [posts_per_page] => 100 [meta_query] => Array ( ... ) )' },
-        { time: '2024-01-15 10:15:33', level: 'error', message: 'GD Library Error: imagecreatetruecolor() failed for dimensions 1200x630' },
-        { time: '2024-01-15 10:15:33', level: 'debug', message: 'PHP Memory: 45MB / 128MB - Peak: 48MB' },
-        { time: '2024-01-14 16:45:20', level: 'info', message: 'Settings saved: Array ( [generation_method] => "title" [auto_generate] => true )' },
-        { time: '2024-01-14 16:45:20', level: 'debug', message: 'update_option() called: afi_settings' },
-        { time: '2024-01-14 09:00:01', level: 'debug', message: 'CRON: afi_scheduled_generation executed' },
-        { time: '2024-01-14 09:00:02', level: 'debug', message: 'Posts without featured image: 0' },
+      // Create plain text log entries like the reference image
+      const logLines = [
+        '13-01-2026 21:06:53 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:53 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
+        '13-01-2026 21:06:54 [creative-motion.local][info] Start bulk optimization process! Scope: media-library',
+        '13-01-2026 21:06:54 [creative-motion.local][info] End bulk optimization process! Scope: media-library. Remain: 1',
+        '------------------------------',
       ];
 
-      const logEntries = debugLogs;
-
-      const logsHtml = logEntries.map(log => `
-        <div class="log-entry">
-          <span class="log-time">${log.time}</span>
-          <span class="log-level ${log.level}">${log.level}</span>
-          <span class="log-message">${log.message}</span>
-        </div>
-      `).join('');
+      const logsText = logLines.join('\\n');
 
       return `
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Plugin Logs</div>
-              <div class="card-subtitle">PHP debug output and error information</div>
-            </div>
-            <div class="logs-info">
-              <span>Log size:</span>
-              <span class="logs-size">6 MB</span>
-            </div>
+        <div class="card" style="border:none;box-shadow:none;background:transparent;">
+          <div style="margin-bottom:20px;">
+            <h2 style="font-size:18px;font-weight:600;color:#23282d;margin-bottom:6px;">Plugin Log</h2>
+            <p style="font-size:13px;color:#666;">In this section, you can track how the plugin works. Sending this log to the developer will help you resolve possible issues.</p>
           </div>
-          <div class="card-body">
-            <div class="logs-header">
-              <div class="logs-actions">
-                <button class="btn btn-secondary">
-                  <span class="dashicons dashicons-download" style="font-size:16px;"></span>
-                  Export Debug Information
-                </button>
-                <button class="btn btn-danger">
-                  <span class="dashicons dashicons-trash" style="font-size:16px;"></span>
-                  Clean-up Logs (6 MB)
-                </button>
-              </div>
-            </div>
-            <div class="log-viewer">
-              ${logsHtml}
-            </div>
+          <div style="margin-bottom:20px;display:flex;gap:8px;">
+            <button class="btn" style="background:#0073aa;color:white;border:none;padding:8px 16px;font-size:13px;">Export Debug Information</button>
+            <button class="btn" style="background:white;color:#0073aa;border:1px solid #0073aa;padding:8px 16px;font-size:13px;">Clean-up Logs (6 MB)</button>
+          </div>
+          <div style="background:white;border:1px solid #e5e5e5;padding:20px;font-family:'Courier New', Courier, monospace;font-size:12px;line-height:1.8;color:#23282d;max-height:500px;overflow-y:auto;white-space:pre-wrap;">
+${logLines.join('\n')}
           </div>
         </div>
       `;
