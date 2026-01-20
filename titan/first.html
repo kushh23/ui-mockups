@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Security - Redesigned UI Prototype</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            color: var(--gray-800);
+        }
+
+        /* WordPress Admin Bar Simulation */
+        #wpadminbar {
+            background: #23282d;
+            color: #eee;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 13px;
+        }
+
+        .wp-logo {
+            font-weight: bold;
+            margin-right: 20px;
+        }
+
+        /* WordPress Admin Sidebar */
+        #adminmenuwrap {
+            width: 160px;
+            background: #23282d;
+            min-height: calc(100vh - 32px);
+            position: fixed;
+            top: 32px;
+            left: 0;
+            z-index: 100;
+        }
+
+        #adminmenu {
+            list-style: none;
+            margin-top: 0;
+        }
+
+        #adminmenu li {
+            position: relative;
+        }
+
+        #adminmenu a {
+            color: #eee;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        #adminmenu a:hover {
+            background: #32373c;
+        }
+
+        #adminmenu .menu-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        #adminmenu .current {
+            background: #0073aa;
+            border-left: 4px solid #00a0d2;
+        }
+
+        #adminmenu .submenu {
+            background: #32373c;
+            display: none;
+            list-style: none;
+        }
+
+        #adminmenu .has-submenu.open .submenu {
+            display: block;
+        }
+
+        #adminmenu .submenu a {
+            padding: 8px 15px 8px 45px;
+            font-size: 13px;
+        }
+
+        /* Main Content Area */
+        #wpcontent {
+            margin-left: 160px;
+            padding: 20px 20px 50px;
+            min-height: calc(100vh - 32px);
+        }
+
+        .wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header .subtitle {
+            color: var(--gray-600);
+            font-size: 15px;
+        }
+
+        /* Tabs Navigation */
+        .nav-tab-wrapper {
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 8px 8px 0 0;
+            padding: 0 20px;
+        }
+
+        .nav-tab {
+            display: inline-block;
+            padding: 15px 25px;
+            text-decoration: none;
+            color: var(--gray-600);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -1px;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-tab:hover {
+            color: var(--primary);
+        }
+
+        .nav-tab-active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        /* Security Score */
+        .security-score {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 8px solid rgba(255,255,255,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .score-number {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        .score-message {
+            font-size: 18px;
+            opacity: 0.95;
+        }
+
+        /* Status Cards */
+        .status-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .status-card.active {
+            border-left-color: var(--success);
+        }
+
+        .status-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .status-card.inactive {
+            border-left-color: var(--gray-300);
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .status-icon.success {
+            background: #d1fae5;
+            color: var(--success);
+        }
+
+        .status-icon.warning {
+            background: #fef3c7;
+            color: var(--warning);
+        }
+
+        .status-icon.gray {
+            background: var(--gray-100);
+            color: var(--gray-400);
+        }
+
+        .status-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 5px;
+        }
+
+        .status-content p {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        /* Action Cards */
+        .action-card {
+            text-align: center;
+            padding: 30px 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid var(--gray-200);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 15px;
+        }
+
+        .action-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .action-card p {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 15px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-lg {
+            padding: 14px 28px;
+            font-size: 16px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: .3s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Setting Row */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            font-size: 13px;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-pro {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: var(--warning);
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border-color: var(--primary);
+            color: #1e40af;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            border-color: var(--danger);
+            color: #991b1b;
+        }
+
+        /* Stats */
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: var(--gray-200);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        /* Scan Results */
+        .scan-result-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .scan-result-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+
+        .scan-result-content {
+            flex: 1;
+        }
+
+        .scan-result-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 3px;
+        }
+
+        .scan-result-content p {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            margin: 15px 0;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .radio-option:hover {
+            border-color: var(--primary);
+            background: var(--gray-50);
+        }
+
+        .radio-option input {
+            margin-right: 15px;
+            margin-top: 3px;
+        }
+
+        .radio-option.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        /* Firewall Preset Cards */
+        .preset-card {
+            padding: 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .preset-card.selected {
+            border-color: var(--primary);
+            background: #eff6ff;
+        }
+
+        .preset-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .preset-card p {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 10px;
+        }
+
+        .preset-card ul {
+            list-style: none;
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .preset-card ul li {
+            padding: 3px 0;
+        }
+
+        .preset-card ul li:before {
+            content: "✓ ";
+            color: var(--success);
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        /* Blocked IPs Table */
+        .blocked-ips-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .blocked-ips-table th {
+            background: var(--gray-50);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--gray-700);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .blocked-ips-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 13px;
+        }
+
+        .blocked-ips-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* Hide inactive pages */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #adminmenuwrap {
+                width: 60px;
+            }
+
+            #adminmenu .menu-text {
+                display: none;
+            }
+
+            #wpcontent {
+                margin-left: 60px;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-500);
+        }
+
+        .spinner {
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notification Dot */
+        .notification-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        /* Pro Upgrade Card */
+        .pro-upgrade {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .pro-upgrade h3 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .pro-upgrade p {
+            margin-bottom: 20px;
+            opacity: 0.95;
+        }
+
+        .pro-upgrade ul {
+            list-style: none;
+            margin-bottom: 20px;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pro-upgrade li {
+            padding: 8px 0;
+            opacity: 0.95;
+        }
+
+        .pro-upgrade li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- WordPress Admin Bar -->
+    <div id="wpadminbar">
+        <div class="wp-logo">⬛ WordPress</div>
+        <span style="opacity: 0.7;">My Site</span>
+    </div>
+
+    <!-- WordPress Admin Sidebar -->
+    <div id="adminmenuwrap">
+        <ul id="adminmenu">
+            <li>
+                <a href="#" onclick="showPage('dashboard')">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </li>
+            <li class="has-submenu" id="titan-menu">
+                <a href="#" class="current">
+                    <span class="menu-icon">🛡️</span>
+                    <span class="menu-text">Titan Security</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="#" onclick="showPage('titan-dashboard')" class="current">Dashboard</a></li>
+                    <li><a href="#" onclick="showPage('protection')">Protection</a></li>
+                    <li><a href="#" onclick="showPage('scanner')">Scanner</a></li>
+                    <li><a href="#" onclick="showPage('firewall')">Firewall (PRO)</a></li>
+                    <li><a href="#" onclick="showPage('settings')">Settings</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="menu-icon">📄</span>
+                    <span class="menu-text">Pages</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div id="wpcontent">
+        <div class="wrap">
+            <!-- DASHBOARD PAGE -->
+            <div id="page-titan-dashboard" class="page-content active">
+                <div class="page-header">
+                    <h1>🛡️ Titan Security Dashboard</h1>
+                    <p class="subtitle">Your site's security status at a glance</p>
+                </div>
+
+                <!-- Security Score -->
+                <div class="security-score">
+                    <div class="score-circle">
+                        <div class="score-number">85<span style="font-size: 24px;">%</span></div>
+                        <div class="score-label">Protected</div>
+                    </div>
+                    <div class="score-message">
+                        ✅ Your site is well protected!<br>
+                        Complete 2 more actions to reach 100%
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <h2 style="margin-bottom: 20px;">📋 Quick Actions</h2>
+                <div class="grid-3">
+                    <div class="action-card" onclick="showPage('scanner')">
+                        <div class="action-icon">🔍</div>
+                        <h3>Scan Now</h3>
+                        <p>Last scan: 2 days ago</p>
+                        <button class="btn btn-primary">Start Scan</button>
+                    </div>
+                    <div class="action-card" onclick="showPage('protection')">
+                        <div class="action-icon">⚙️</div>
+                        <h3>Configure Protection</h3>
+                        <p>Customize security settings</p>
+                        <button class="btn btn-secondary">Go to Settings</button>
+                    </div>
+                    <div class="action-card" onclick="openModal('upgrade-modal')">
+                        <div class="action-icon">📊</div>
+                        <h3>View Reports</h3>
+                        <p>Detailed analytics</p>
+                        <button class="btn btn-secondary">Upgrade to PRO</button>
+                    </div>
+                </div>
+
+                <!-- Protection Status -->
+                <h2 style="margin: 40px 0 20px;">🛡️ Protection Status</h2>
+                <div class="grid-2">
+                    <div class="status-card active">
+                        <div class="status-icon success">✓</div>
+                        <div class="status-content">
+                            <h3>Anti-Spam Active</h3>
+                            <p>1,234 spam comments blocked</p>
+                        </div>
+                    </div>
+                    <div class="status-card active">
+                        <div class="status-icon success">✓</div>
+                        <div class="status-content">
+                            <h3>Login Protection Active</h3>
+                            <p>12 IPs currently blocked</p>
+                        </div>
+                    </div>
+                    <div class="status-card active">
+                        <div class="status-icon success">✓</div>
+                        <div class="status-content">
+                            <h3>Malware Scanner Active</h3>
+                            <p>No threats found</p>
+                        </div>
+                    </div>
+                    <div class="status-card warning">
+                        <div class="status-icon warning">⚠</div>
+                        <div class="status-content">
+                            <h3>Site Hardening Partial</h3>
+                            <p>2 recommended tweaks disabled</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning" style="margin-top: 20px;">
+                    <strong>⚠️ Action Needed:</strong> Enable recommended security settings to reach 100% protection.
+                    <a href="#" onclick="showPage('protection')" style="color: #92400e; text-decoration: underline; font-weight: 600;">Enable Now →</a>
+                </div>
+
+                <!-- Recent Activity -->
+                <h2 style="margin: 40px 0 20px;">📈 Last 30 Days</h2>
+                <div class="card">
+                    <div class="grid-3">
+                        <div class="stat-box">
+                            <div class="stat-number">456</div>
+                            <div class="stat-label">Spam Comments Blocked</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">Attacks Blocked (PRO)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">Security Scans</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <h2 style="margin: 40px 0 20px;">🔔 Recent Notifications</h2>
+                <div class="card">
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #fef3c7; color: #f59e0b;">⚠</div>
+                        <div class="scan-result-content">
+                            <h4>Scanner found 2 vulnerabilities in plugins</h4>
+                            <p>3 hours ago • WooCommerce & Contact Form 7 need updates</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="showPage('scanner')">View Details</button>
+                    </div>
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #d1fae5; color: #10b981;">✓</div>
+                        <div class="scan-result-content">
+                            <h4>15 spam comments blocked today</h4>
+                            <p>1 hour ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROTECTION PAGE -->
+            <div id="page-protection" class="page-content">
+                <div class="page-header">
+                    <h1>🛡️ Protection Settings</h1>
+                    <p class="subtitle">Configure your site's security protection</p>
+                </div>
+
+                <div class="nav-tab-wrapper">
+                    <a href="#" class="nav-tab nav-tab-active" onclick="showProtectionTab('antispam')">Anti-Spam</a>
+                    <a href="#" class="nav-tab" onclick="showProtectionTab('login')">Login Protection</a>
+                    <a href="#" class="nav-tab" onclick="showProtectionTab('hardening')">Site Hardening</a>
+                </div>
+
+                <!-- Anti-Spam Tab -->
+                <div id="tab-antispam" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            📧 Anti-Spam Settings
+                        </div>
+                        <div class="alert alert-success">
+                            <strong>✓ Active Protection:</strong> 1,234 spam comments blocked so far
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Enable Anti-Spam Protection</h4>
+                                <p>Block spam in comments automatically using invisible JavaScript captcha and honeypot techniques.</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked onchange="toggleSetting(this, 'Anti-spam')">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Save Blocked Spam for Review</h4>
+                                <p>Store blocked comments in spam folder (useful for testing). ⚠️ May increase database size</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Show Privacy Notice on Comment Forms <span class="badge badge-pro">PRO</span></h4>
+                                <p>Add GDPR-compliant privacy notice under comment forms</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="openModal('upgrade-modal')">Upgrade to PRO</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            📝 Form Protection <span class="badge badge-pro">PRO</span>
+                        </div>
+                        <p style="color: var(--gray-600); margin-bottom: 20px;">Protect your contact forms from spam submissions</p>
+
+                        <div class="alert alert-info">
+                            ✓ Contact Form 7 detected on your site
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Protect Contact Form 7 <span class="badge badge-pro">PRO</span></h4>
+                                <p>Enable anti-spam protection for all Contact Form 7 forms</p>
+                            </div>
+                            <button class="btn btn-secondary" onclick="openModal('upgrade-modal')">Upgrade to PRO</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Protection Tab -->
+                <div id="tab-login" class="tab-content" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            🔐 Login Protection Settings
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Block Brute Force Attacks</h4>
+                                <p>Automatically block IP addresses after multiple failed login attempts</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                            <h4 style="font-size: 15px; margin-bottom: 15px;">Failed Login Threshold</h4>
+                            <input type="range" min="3" max="10" value="5" style="width: 100%;" oninput="document.getElementById('threshold-value').innerText = this.value">
+                            <p style="font-size: 13px; color: var(--gray-600); margin-top: 10px;">
+                                Block after <strong id="threshold-value">5</strong> failed attempts
+                            </p>
+                        </div>
+
+                        <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                            <h4 style="font-size: 15px; margin-bottom: 15px;">Lockout Duration</h4>
+                            <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px;">
+                                <option>15 minutes</option>
+                                <option selected>30 minutes</option>
+                                <option>1 hour</option>
+                                <option>6 hours</option>
+                                <option>24 hours</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            🚫 Blocked IPs
+                            <span class="badge badge-warning">12 Active</span>
+                        </div>
+
+                        <table class="blocked-ips-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Reason</th>
+                                    <th>Duration</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>192.168.1.100</td>
+                                    <td>5 failed logins</td>
+                                    <td>30 min (15 min remaining)</td>
+                                    <td><a href="#" style="color: var(--primary);">Unblock</a></td>
+                                </tr>
+                                <tr>
+                                    <td>10.0.0.50</td>
+                                    <td>SQL injection attempt</td>
+                                    <td>Permanent</td>
+                                    <td><a href="#" style="color: var(--primary);">Unblock</a></td>
+                                </tr>
+                                <tr>
+                                    <td>203.0.113.45</td>
+                                    <td>Brute force attack</td>
+                                    <td>24 hours (12 hours remaining)</td>
+                                    <td><a href="#" style="color: var(--primary);">Unblock</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <button class="btn btn-secondary" style="margin-top: 15px;">+ Add IP or Range to Block</button>
+                    </div>
+                </div>
+
+                <!-- Site Hardening Tab -->
+                <div id="tab-hardening" class="tab-content" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            🔧 Recommended Hardening
+                            <button class="btn btn-success">Enable All Recommended</button>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Enforce Strong Passwords <span class="badge badge-success">Recommended</span></h4>
+                                <p>Force users to use strong passwords as rated by WordPress password meter</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                            <h4 style="font-size: 15px; margin-bottom: 10px;">Minimum Role for Strong Passwords</h4>
+                            <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px;">
+                                <option selected>Administrator</option>
+                                <option>Editor</option>
+                                <option>Author</option>
+                                <option>Contributor</option>
+                                <option>Subscriber</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Hide WordPress & Plugin Versions <span class="badge badge-success">Recommended</span></h4>
+                                <p>Prevent attackers from discovering your WordPress and plugin versions</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Hide Author Login Information <span class="badge badge-success">Recommended</span></h4>
+                                <p>Prevent username enumeration via author archives</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Secure Login Error Messages</h4>
+                                <p>Hide whether username or password was incorrect to prevent username enumeration</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            ⚙️ Advanced Hardening
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Disable XML-RPC</h4>
+                                <p>⚠️ Use carefully! This may break Jetpack and mobile apps</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SCANNER PAGE -->
+            <div id="page-scanner" class="page-content">
+                <div class="page-header">
+                    <h1>🔍 Security Scanner</h1>
+                    <p class="subtitle">Scan your site for malware, vulnerabilities, and file integrity issues</p>
+                </div>
+
+                <div class="grid-2" style="margin-bottom: 30px;">
+                    <div class="card">
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 14px; color: var(--gray-600); margin-bottom: 10px;">Last Scan</div>
+                            <div style="font-size: 20px; font-weight: 600; color: var(--gray-900); margin-bottom: 10px;">2 days ago</div>
+                            <div style="font-size: 14px; color: var(--gray-600); margin-bottom: 20px;">October 18, 2026 at 3:42 PM</div>
+                            <div class="badge badge-success" style="font-size: 14px; padding: 8px 16px;">✓ No Threats Found</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px; font-size: 16px;">Scan Type</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="scan-type" value="quick">
+                                <div>
+                                    <strong>Quick Scan</strong> (2 min)
+                                    <div style="font-size: 13px; color: var(--gray-600);">Checks CVE vulnerabilities only</div>
+                                </div>
+                            </label>
+                            <label class="radio-option selected">
+                                <input type="radio" name="scan-type" value="standard" checked>
+                                <div>
+                                    <strong>Standard Scan</strong> (10 min)
+                                    <div style="font-size: 13px; color: var(--gray-600);">CVE + File integrity checks</div>
+                                </div>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="scan-type" value="deep">
+                                <div>
+                                    <strong>Deep Scan</strong> <span class="badge badge-pro">PRO</span>
+                                    <div style="font-size: 13px; color: var(--gray-600);">Full malware signature scan</div>
+                                </div>
+                            </label>
+                        </div>
+                        <button class="btn btn-primary btn-lg" style="width: 100%; margin-top: 15px;" onclick="startScan()">
+                            🔍 Start Scan Now
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        🗓️ Scan Schedule
+                    </div>
+
+                    <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                        <h4 style="font-size: 15px; margin-bottom: 15px;">Automatic Scanning</h4>
+                        <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px;">
+                            <option>Never</option>
+                            <option>Daily (PRO)</option>
+                            <option selected>Weekly</option>
+                            <option>Custom (PRO)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Email me scan results</h4>
+                            <p>Receive an email notification when scans complete</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <h4>Send weekly security digest</h4>
+                            <p>Summary of all security events sent every Monday at 9:00 AM</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        📋 Scan Results (Last Scan)
+                    </div>
+
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #d1fae5; color: #10b981;">✓</div>
+                        <div class="scan-result-content">
+                            <h4>WordPress Core: v6.8</h4>
+                            <p>Up to date, no vulnerabilities found</p>
+                        </div>
+                    </div>
+
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #fef3c7; color: #f59e0b;">⚠</div>
+                        <div class="scan-result-content">
+                            <h4>Plugins: 2 vulnerabilities found</h4>
+                            <p>WooCommerce 8.2.1 → 8.2.2 (CVE-2024-12345)<br>Contact Form 7 5.8 → 5.9 (CVE-2024-67890)</p>
+                        </div>
+                        <button class="btn btn-primary">Update Plugins</button>
+                    </div>
+
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #d1fae5; color: #10b981;">✓</div>
+                        <div class="scan-result-content">
+                            <h4>Themes: No issues found</h4>
+                            <p>All themes up to date and secure</p>
+                        </div>
+                    </div>
+
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #d1fae5; color: #10b981;">✓</div>
+                        <div class="scan-result-content">
+                            <h4>File Integrity: All core files verified</h4>
+                            <p>All WordPress core files match WordPress.org repository</p>
+                        </div>
+                    </div>
+
+                    <div class="scan-result-item">
+                        <div class="scan-result-icon" style="background: #fef3c7; color: #f59e0b;">⚠</div>
+                        <div class="scan-result-content">
+                            <h4>Modified Files: 3 files changed</h4>
+                            <p>wp-config.php (expected - custom config)<br>
+                               .htaccess (expected - custom rules)<br>
+                               wp-content/uploads/2024/malicious.php (⚠️ Suspicious!)</p>
+                        </div>
+                        <button class="btn btn-danger">Delete Suspicious File</button>
+                    </div>
+                </div>
+
+                <div class="pro-upgrade">
+                    <h3>🚀 Upgrade to Deep Scan (PRO)</h3>
+                    <p>Your site has grown! We scanned 1,000 files, but you have 2,456 more files we couldn't check with the free version.</p>
+                    <ul>
+                        <li>Unlimited file scanning</li>
+                        <li>6,000+ malware signatures (vs. 1,000 free)</li>
+                        <li>Automated malware quarantine</li>
+                        <li>Scheduled daily/weekly scans</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <button class="btn btn-lg" style="background: white; color: var(--secondary); font-weight: 600;">
+                        Upgrade to PRO - $49/year
+                    </button>
+                </div>
+            </div>
+
+            <!-- FIREWALL PAGE -->
+            <div id="page-firewall" class="page-content">
+                <div class="page-header">
+                    <h1>🔥 Web Application Firewall <span class="badge badge-pro">PRO</span></h1>
+                    <p class="subtitle">Real-time attack blocking and threat protection</p>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        🛡️ Firewall Mode
+                    </div>
+
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="firewall-mode" value="disabled">
+                            <div>
+                                <strong>Disabled</strong>
+                                <div style="font-size: 13px; color: var(--gray-600);">Firewall is turned off</div>
+                            </div>
+                        </label>
+                        <label class="radio-option selected">
+                            <input type="radio" name="firewall-mode" value="learning" checked>
+                            <div>
+                                <strong>Learning Mode</strong> <span class="badge badge-warning">Recommended</span>
+                                <div style="font-size: 13px; color: var(--gray-600);">Log attacks, don't block - prevents false positives</div>
+                            </div>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="firewall-mode" value="protection">
+                            <div>
+                                <strong>Protection Mode</strong>
+                                <div style="font-size: 13px; color: var(--gray-600);">Actively block attacks</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="alert alert-warning" style="margin-top: 20px;">
+                        <strong>⚠️ Currently in Learning Mode</strong><br>
+                        We're learning your site's traffic patterns to prevent false positives. After 7 days, we'll recommend switching to Protection Mode.
+                        <button class="btn btn-primary" style="margin-top: 10px;">Switch to Protection Mode Now</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        ⚙️ Protection Level
+                    </div>
+
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">Choose a preset or create custom rules</p>
+
+                    <div class="grid-3">
+                        <div class="preset-card selected">
+                            <h4>Standard Protection</h4>
+                            <span class="badge badge-success">Recommended</span>
+                            <p>Balanced security for most sites</p>
+                            <ul>
+                                <li>SQL Injection blocking (18 rules)</li>
+                                <li>XSS blocking (24 rules)</li>
+                                <li>File inclusion blocking (12 rules)</li>
+                                <li>Remote code execution (15 rules)</li>
+                                <li>Real-time IP blocklist</li>
+                            </ul>
+                        </div>
+
+                        <div class="preset-card">
+                            <h4>High Security</h4>
+                            <span class="badge badge-warning">Advanced</span>
+                            <p>Maximum protection, may block legitimate traffic</p>
+                            <ul>
+                                <li>All Standard rules</li>
+                                <li>Aggressive bot detection</li>
+                                <li>Stricter validation</li>
+                                <li>Rate limiting enabled</li>
+                            </ul>
+                        </div>
+
+                        <div class="preset-card">
+                            <h4>Custom Rules</h4>
+                            <span class="badge badge-pro">Experts</span>
+                            <p>Configure individual rules manually</p>
+                            <ul>
+                                <li>Full control over 100+ rules</li>
+                                <li>Whitelist/blacklist management</li>
+                                <li>Custom attack patterns</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        🚫 Blocked Requests
+                        <span class="badge badge-warning">1,234 Blocked</span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <strong>Real-time Threat Feed:</strong> Currently blocking 1,234 malicious IPs (updated 2 hours ago)
+                    </div>
+
+                    <table class="blocked-ips-table">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>IPs Blocked</th>
+                                <th>Last Updated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Real-time Threat Feed (PRO)</td>
+                                <td>1,234 IPs</td>
+                                <td>2 hours ago</td>
+                            </tr>
+                            <tr>
+                                <td>Auto-blocked (Brute Force)</td>
+                                <td>12 IPs</td>
+                                <td>15 minutes ago</td>
+                            </tr>
+                            <tr>
+                                <td>Manual Blocks</td>
+                                <td>3 IPs/Ranges</td>
+                                <td>3 days ago</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        📊 Attack Log (Last 24 Hours)
+                    </div>
+
+                    <div class="grid-3" style="margin-bottom: 20px;">
+                        <div class="stat-box">
+                            <div class="stat-number">23</div>
+                            <div class="stat-label">Attacks Blocked</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Unique IPs</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">Countries</div>
+                        </div>
+                    </div>
+
+                    <table class="blocked-ips-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>IP Address</th>
+                                <th>Attack Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2:43 PM</td>
+                                <td>203.0.113.45</td>
+                                <td>SQL Injection</td>
+                                <td><span class="badge badge-success">✓ Blocked</span></td>
+                            </tr>
+                            <tr>
+                                <td>2:31 PM</td>
+                                <td>198.51.100.22</td>
+                                <td>XSS Attempt</td>
+                                <td><span class="badge badge-success">✓ Blocked</span></td>
+                            </tr>
+                            <tr>
+                                <td>1:15 PM</td>
+                                <td>192.0.2.100</td>
+                                <td>Brute Force</td>
+                                <td><span class="badge badge-success">✓ Blocked</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <button class="btn btn-secondary" style="margin-top: 15px;">View Full Attack Log →</button>
+                </div>
+
+                <div class="pro-upgrade">
+                    <h3>🔥 Unlock Full Firewall Protection</h3>
+                    <p>Get real-time protection against sophisticated attacks</p>
+                    <ul>
+                        <li>Real-time IP blocklist (1,000+ malicious IPs updated hourly)</li>
+                        <li>Advanced attack pattern recognition</li>
+                        <li>Automatic threat response</li>
+                        <li>Detailed attack analytics</li>
+                        <li>Custom firewall rules</li>
+                    </ul>
+                    <button class="btn btn-lg" style="background: white; color: var(--secondary); font-weight: 600;">
+                        Upgrade to PRO - $49/year
+                    </button>
+                </div>
+            </div>
+
+            <!-- SETTINGS PAGE -->
+            <div id="page-settings" class="page-content">
+                <div class="page-header">
+                    <h1>⚙️ Settings</h1>
+                    <p class="subtitle">Configure global plugin settings</p>
+                </div>
+
+                <div class="nav-tab-wrapper">
+                    <a href="#" class="nav-tab nav-tab-active" onclick="showSettingsTab('general')">General</a>
+                    <a href="#" class="nav-tab" onclick="showSettingsTab('notifications')">Notifications</a>
+                    <a href="#" class="nav-tab" onclick="showSettingsTab('advanced')">Advanced</a>
+                    <a href="#" class="nav-tab" onclick="showSettingsTab('import')">Import/Export</a>
+                </div>
+
+                <!-- General Tab -->
+                <div id="settings-general" class="tab-content">
+                    <div class="card">
+                        <div class="card-header">
+                            🔧 General Settings
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Show Titan menu in admin bar</h4>
+                                <p>Quick access to security features from any admin page</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Delete all data on uninstall</h4>
+                                <p>⚠️ Remove all Titan settings and data when uninstalling plugin (cannot be undone)</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            🌐 IP Address Detection
+                        </div>
+
+                        <div class="alert alert-success">
+                            <strong>✓ Auto-detect (Recommended):</strong> We automatically detect the correct method for your server setup.
+                        </div>
+
+                        <details style="margin-top: 20px;">
+                            <summary style="cursor: pointer; font-weight: 600; color: var(--primary);">
+                                ⚙️ Advanced: Manual IP detection
+                            </summary>
+                            <div style="margin-top: 15px; padding: 15px; background: var(--gray-50); border-radius: 6px;">
+                                <div class="alert alert-warning">
+                                    <strong>⚠️ Only change this if you know your server configuration.</strong>
+                                    Incorrect settings may allow IP spoofing and compromise security.
+                                </div>
+                                <label style="display: flex; align-items: center; margin-top: 15px;">
+                                    <input type="checkbox" style="margin-right: 10px;">
+                                    Use custom IP detection method
+                                </label>
+                                <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; margin-top: 10px; width: 100%;">
+                                    <option selected>Auto-detect (Recommended)</option>
+                                    <option>REMOTE_ADDR (PHP only)</option>
+                                    <option>X-Forwarded-For (Proxy)</option>
+                                    <option>X-Real-IP (Nginx)</option>
+                                    <option>CF-Connecting-IP (Cloudflare)</option>
+                                </select>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Notifications Tab -->
+                <div id="settings-notifications" class="tab-content" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            🔔 Email Notifications
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Email me scan results</h4>
+                                <p>Send an email after each security scan completes</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="setting-row">
+                            <div class="setting-info">
+                                <h4>Weekly security digest</h4>
+                                <p>Summary of all security events</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                            <h4 style="font-size: 15px; margin-bottom: 15px;">Digest Schedule</h4>
+                            <div class="grid-2">
+                                <div>
+                                    <label style="font-size: 13px; color: var(--gray-600); display: block; margin-bottom: 5px;">Day</label>
+                                    <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; width: 100%;">
+                                        <option selected>Monday</option>
+                                        <option>Tuesday</option>
+                                        <option>Wednesday</option>
+                                        <option>Thursday</option>
+                                        <option>Friday</option>
+                                        <option>Saturday</option>
+                                        <option>Sunday</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 13px; color: var(--gray-600); display: block; margin-bottom: 5px;">Time</label>
+                                    <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; width: 100%;">
+                                        <option selected>9:00 AM</option>
+                                        <option>12:00 PM</option>
+                                        <option>6:00 PM</option>
+                                        <option>11:00 PM</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="padding: 20px 0;">
+                            <h4 style="font-size: 15px; margin-bottom: 10px;">Notification Email</h4>
+                            <input type="email" value="admin@example.com" style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; width: 100%;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Tab -->
+                <div id="settings-advanced" class="tab-content" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            🔬 Advanced Settings
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>ℹ️ Auto-configured:</strong> These settings are automatically optimized for your server.
+                        </div>
+
+                        <div style="padding: 20px 0; border-bottom: 1px solid var(--gray-100);">
+                            <h4 style="font-size: 15px; margin-bottom: 10px;">Scanner Speed</h4>
+                            <div style="padding: 10px; background: var(--gray-50); border-radius: 6px; font-size: 14px; color: var(--gray-700);">
+                                <strong>Auto-detect:</strong> Medium speed (recommended for your server)
+                            </div>
+                            <details style="margin-top: 15px;">
+                                <summary style="cursor: pointer; font-weight: 600; color: var(--primary);">
+                                    Manual configuration
+                                </summary>
+                                <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; width: 100%; margin-top: 10px;">
+                                    <option>Free (Slow)</option>
+                                    <option>Slow</option>
+                                    <option selected>Medium (Recommended)</option>
+                                    <option>Fast (Requires 100MB+ RAM)</option>
+                                </select>
+                            </details>
+                        </div>
+
+                        <div style="padding: 20px 0;">
+                            <h4 style="font-size: 15px; margin-bottom: 10px;">Logging Level</h4>
+                            <select style="padding: 8px 12px; border: 2px solid var(--gray-300); border-radius: 6px; font-size: 14px; width: 100%;">
+                                <option>Minimal</option>
+                                <option selected>Standard</option>
+                                <option>Verbose (for debugging)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import/Export Tab -->
+                <div id="settings-import" class="tab-content" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            📦 Import / Export
+                        </div>
+
+                        <h4 style="font-size: 16px; margin-bottom: 10px;">Export Settings</h4>
+                        <p style="color: var(--gray-600); margin-bottom: 15px;">Save all Titan settings as JSON file</p>
+                        <button class="btn btn-primary">📥 Download Configuration</button>
+
+                        <hr style="margin: 30px 0; border: none; border-top: 1px solid var(--gray-200);">
+
+                        <h4 style="font-size: 16px; margin-bottom: 10px;">Import Settings</h4>
+                        <p style="color: var(--gray-600); margin-bottom: 15px;">Upload a previously exported configuration file</p>
+                        <div class="alert alert-warning">
+                            <strong>⚠️ Warning:</strong> This will overwrite all current settings
+                        </div>
+                        <input type="file" accept=".json" style="margin-bottom: 15px;">
+                        <button class="btn btn-secondary">📤 Import Configuration</button>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; text-align: right;">
+                    <button class="btn btn-lg btn-success">💾 Save All Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Modal -->
+    <div id="upgrade-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>🌟 Upgrade to Titan Security PRO</h2>
+            <p style="color: var(--gray-600); margin-bottom: 20px;">Unlock advanced protection and premium features</p>
+
+            <div style="background: var(--gray-50); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">PRO Features Include:</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="padding: 8px 0;">✓ Web Application Firewall with real-time threat feed</li>
+                    <li style="padding: 8px 0;">✓ Advanced malware scanner (6,000+ signatures)</li>
+                    <li style="padding: 8px 0;">✓ Unlimited file scanning</li>
+                    <li style="padding: 8px 0;">✓ Automated malware quarantine</li>
+                    <li style="padding: 8px 0;">✓ Daily scheduled scans</li>
+                    <li style="padding: 8px 0;">✓ Form protection (Contact Form 7, Ninja Forms, etc.)</li>
+                    <li style="padding: 8px 0;">✓ Detailed attack analytics & reports</li>
+                    <li style="padding: 8px 0;">✓ Priority email support</li>
+                </ul>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 42px; font-weight: 700; color: var(--primary);">$49<span style="font-size: 20px; font-weight: 400; color: var(--gray-600);">/year</span></div>
+                <div style="color: var(--gray-600);">Less than $4 per month</div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 15px;">
+                🚀 Upgrade to PRO Now
+            </button>
+            <button class="btn btn-secondary" style="width: 100%;" onclick="closeModal('upgrade-modal')">
+                Maybe Later
+            </button>
+        </div>
+    </div>
+
+    <!-- Scanning Modal -->
+    <div id="scan-modal" class="modal-overlay">
+        <div class="modal">
+            <div style="text-align: center;">
+                <div class="spinner"></div>
+                <h2>🔍 Scanning Your Site...</h2>
+                <p style="color: var(--gray-600); margin-bottom: 20px;">Please wait while we check for vulnerabilities and malware</p>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="scan-progress" style="width: 0%"></div>
+                </div>
+
+                <p id="scan-status" style="margin-top: 15px; font-size: 14px; color: var(--gray-600);">
+                    Initializing scan...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Open Titan submenu by default
+            document.getElementById('titan-menu').classList.add('open');
+        });
+
+        // Page Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById('page-' + pageId).classList.add('active');
+
+            // Update submenu active state
+            document.querySelectorAll('#adminmenu .submenu a').forEach(link => {
+                link.classList.remove('current');
+            });
+            event.target.classList.add('current');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Protection Page Tabs
+        function showProtectionTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('#page-protection .tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Show selected tab
+            document.getElementById('tab-' + tabId).style.display = 'block';
+
+            // Update nav-tab active state
+            document.querySelectorAll('#page-protection .nav-tab').forEach(tab => {
+                tab.classList.remove('nav-tab-active');
+            });
+            event.target.classList.add('nav-tab-active');
+        }
+
+        // Settings Page Tabs
+        function showSettingsTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('#page-settings .tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Show selected tab
+            document.getElementById('settings-' + tabId).style.display = 'block';
+
+            // Update nav-tab active state
+            document.querySelectorAll('#page-settings .nav-tab').forEach(tab => {
+                tab.classList.remove('nav-tab-active');
+            });
+            event.target.classList.add('nav-tab-active');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Radio option selection
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected from siblings
+                this.parentElement.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                // Add selected to this
+                this.classList.add('selected');
+                // Check the radio
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // Preset card selection
+        document.querySelectorAll('.preset-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.parentElement.querySelectorAll('.preset-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                this.classList.add('selected');
+            });
+        });
+
+        // Toggle Setting
+        function toggleSetting(checkbox, settingName) {
+            if (checkbox.checked) {
+                alert('✓ ' + settingName + ' enabled successfully!');
+            } else {
+                alert('○ ' + settingName + ' disabled.');
+            }
+        }
+
+        // Start Scan
+        function startScan() {
+            openModal('scan-modal');
+            let progress = 0;
+            const progressBar = document.getElementById('scan-progress');
+            const statusText = document.getElementById('scan-status');
+
+            const statuses = [
+                'Checking WordPress core files...',
+                'Scanning plugins for vulnerabilities...',
+                'Verifying theme integrity...',
+                'Running malware signature checks...',
+                'Analyzing file permissions...',
+                'Finalizing scan results...'
+            ];
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        closeModal('scan-modal');
+                        alert('✓ Scan complete! Found 2 vulnerabilities in plugins.');
+                    }, 500);
+                }
+                progressBar.style.width = progress + '%';
+                statusText.textContent = statuses[Math.floor(progress / 100 * statuses.length)];
+            }, 800);
+        }
+    </script>
+</body>
+</html>
