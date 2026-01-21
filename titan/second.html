@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titan Anti-spam & Security</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .btn-primary {
+            background-color: #5D05B7;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #4A0492;
+        }
+        .btn-secondary {
+            background-color: #2271B1;
+            transition: background-color 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #135E96;
+        }
+        .text-primary {
+            color: #5D05B7;
+        }
+        .text-primary:hover {
+            color: #4A0492;
+        }
+        .bg-primary {
+            background-color: #5D05B7;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            height: 1.75rem;
+            width: 3rem;
+            align-items: center;
+            border-radius: 9999px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+        .toggle-switch.active {
+            background-color: #5D05B7;
+        }
+        .toggle-switch.inactive {
+            background-color: #D1D5DB;
+        }
+        .toggle-knob {
+            display: inline-block;
+            height: 1.25rem;
+            width: 1.25rem;
+            transform: translateX(0.25rem);
+            border-radius: 9999px;
+            background-color: white;
+            transition: transform 0.2s;
+        }
+        .toggle-switch.active .toggle-knob {
+            transform: translateX(1.5rem);
+        }
+        .hidden { display: none !important; }
+        .tab-active {
+            background-color: #5D05B7 !important;
+            color: white !important;
+        }
+        .subtab-active {
+            background-color: #E9D5FF !important;
+            color: #5D05B7 !important;
+        }
+        .audit-tab-active {
+            border-color: #2271B1 !important;
+            color: #2271B1 !important;
+        }
+        .firewall-tooltip {
+            position: absolute;
+            top: -140px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+            width: 280px;
+            z-index: 50;
+        }
+        .firewall-circle-wrapper:hover .firewall-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white border-b border-gray-200 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="shield" class="w-8 h-8" style="color: #5D05B7;"></i>
+                <div>
+                    <h1 class="text-xl font-semibold text-gray-900">Titan Anti-spam & Security</h1>
+                    <p class="text-sm text-gray-500">Version 7.4.0</p>
+                </div>
+            </div>
+            <button class="px-5 py-2 text-white rounded-lg font-medium btn-primary">
+                Save Changes
+            </button>
+        </div>
+    </div>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white border-r border-gray-200 min-h-screen p-4">
+            <nav class="space-y-1" id="sidebar-nav">
+                <button onclick="switchTab('dashboard')" data-tab="dashboard" class="sidebar-btn tab-active w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button onclick="switchTab('antispam')" data-tab="antispam" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span>Anti-spam</span>
+                </button>
+                <div>
+                    <button onclick="switchTab('firewall')" data-tab="firewall" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                        <i data-lucide="shield" class="w-5 h-5"></i>
+                        <span>Firewall</span>
+                    </button>
+                    <div id="firewall-submenu" class="ml-4 mt-1 space-y-1 hidden">
+                        <button onclick="switchFirewallSubPage('overview')" data-subpage="overview" class="firewall-sub-btn subtab-active w-full text-left px-4 py-2 rounded-lg text-sm transition-colors">Overview</button>
+                        <button onclick="switchFirewallSubPage('settings')" data-subpage="settings" class="firewall-sub-btn w-full text-left px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50">Settings</button>
+                        <button onclick="switchFirewallSubPage('blocking')" data-subpage="blocking" class="firewall-sub-btn w-full text-left px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50">Blocking</button>
+                        <button onclick="switchFirewallSubPage('attackslog')" data-subpage="attackslog" class="firewall-sub-btn w-full text-left px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50">Attacks Log</button>
+                        <button onclick="switchFirewallSubPage('limitlogin')" data-subpage="limitlogin" class="firewall-sub-btn w-full text-left px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50">Limit Login Attempts</button>
+                        <button onclick="switchFirewallSubPage('loginlog')" data-subpage="loginlog" class="firewall-sub-btn w-full text-left px-4 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:bg-gray-50">Login Attempts Log</button>
+                    </div>
+                </div>
+                <button onclick="switchTab('twofactor')" data-tab="twofactor" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="key" class="w-5 h-5"></i>
+                    <span>Two-Factor Auth</span>
+                </button>
+                <button onclick="switchTab('backup')" data-tab="backup" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                    <span>Backup</span>
+                </button>
+                <button onclick="switchTab('sitechecker')" data-tab="sitechecker" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                    <span>Site Checker</span>
+                </button>
+                <button onclick="switchTab('tweaks')" data-tab="tweaks" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="wrench" class="w-5 h-5"></i>
+                    <span>Security Tweaks</span>
+                </button>
+                <button onclick="switchTab('errorlog')" data-tab="errorlog" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span>Error Log</span>
+                </button>
+                <button onclick="switchTab('settings')" data-tab="settings" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span>Settings</span>
+                </button>
+                <button onclick="switchTab('license')" data-tab="license" class="sidebar-btn w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors text-gray-700 hover:bg-gray-50">
+                    <i data-lucide="key" class="w-5 h-5"></i>
+                    <span>License</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-600 font-medium">Spam Blocked (7 days)</span>
+                            <i data-lucide="shield" class="w-5 h-5" style="color: #5D05B7;"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-gray-900">0</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-600 font-medium">Files Scanned</span>
+                            <i data-lucide="search" class="w-5 h-5 text-blue-600"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-gray-900">2,067</div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 border border-gray-200">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gray-600 font-medium">Protection Status</span>
+                            <i data-lucide="check-circle" class="w-5 h-5 text-green-600"></i>
+                        </div>
+                        <div class="text-lg font-semibold text-green-600">Active</div>
+                    </div>
+                </div>
+
+                <!-- Firewall Status -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Web Application Firewall</h2>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-start space-x-3">
+                            <i data-lucide="check-circle" class="w-5 h-5 text-green-600 mt-0.5"></i>
+                            <div>
+                                <p class="font-medium text-green-900">Enabled and Protecting</p>
+                                <p class="text-sm text-green-700 mt-1">The Titan Web Application Firewall is actively blocking requests matching known attack patterns and protecting your site from attackers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scanner Section -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900">Security Scanner</h2>
+                        <button class="px-4 py-2 text-white rounded-lg font-medium flex items-center space-x-2 btn-primary">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>Start Scan</span>
+                        </button>
+                    </div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Scanned: 2067 / 2067 files</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                            <div class="h-full" style="width: 98%; background: linear-gradient(to right, #5D05B7, #7B1FA2);"></div>
+                        </div>
+                        <div class="flex items-center space-x-6 mt-4">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 rounded-full" style="background-color: #5D05B7;"></div>
+                                <span class="text-sm text-gray-600">Cleaned: 2042</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                <span class="text-sm text-gray-600">Suspicious: 25</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-gray-400 rounded-full"></div>
+                                <span class="text-sm text-gray-600">Not verified: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-2">Scheduled Scan</div>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Disabled</option>
+                                <option>Daily</option>
+                                <option>Weekly</option>
+                            </select>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-2">Digest</div>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Weekly</option>
+                                <option>Disable</option>
+                            </select>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <div class="text-sm text-gray-600 mb-2">Scanning Speed</div>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Slow</option>
+                                <option>Medium</option>
+                                <option>Fast</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Audit -->
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-lg font-semibold text-gray-900">Security Audit</h2>
+                        <button class="px-4 py-2 text-white rounded-lg font-medium text-sm btn-primary">Check Now</button>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="flex space-x-2 mb-6 border-b border-gray-200">
+                        <button onclick="switchAuditTab('security')" data-audit="security" class="audit-tab audit-tab-active px-4 py-2 text-sm font-medium border-b-2 transition-colors">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Security audit (9)</span>
+                            </div>
+                        </button>
+                        <button onclick="switchAuditTab('vulnerabilities')" data-audit="vulnerabilities" class="audit-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-900 transition-colors">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Vulnerabilities (0)</span>
+                            </div>
+                        </button>
+                        <button onclick="switchAuditTab('malware')" data-audit="malware" class="audit-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-600 hover:text-gray-900 transition-colors">
+                            <div class="flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Malware (25)</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Security Audit Content -->
+                    <div id="audit-security" class="audit-content">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-4 p-4 rounded-lg border bg-orange-50 border-orange-200">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mt-1 text-orange-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900 mb-1">Database table prefix is empty or has a default value</h3>
+                                    <p class="text-sm text-gray-600">This allows hackers to plan a massive attack based on the default prefix "wp_"</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 font-medium">Hide</button>
+                                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">Fix It</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 rounded-lg border bg-red-50 border-red-200">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mt-1 text-red-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900 mb-1">The "expose_php" PHP directive outputs the PHP version</h3>
+                                    <p class="text-sm text-gray-600">Enabling "expose_php" PHP Directive exposes to the world that PHP is installed on the server.</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 font-medium">Hide</button>
+                                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">Fix It</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vulnerabilities Content -->
+                    <div id="audit-vulnerabilities" class="audit-content hidden">
+                        <div class="text-center py-12">
+                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="check-circle" class="w-10 h-10 text-green-600"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">No Vulnerabilities Found</h3>
+                            <p class="text-sm text-gray-600">Your site is currently free of known vulnerabilities.</p>
+                        </div>
+                    </div>
+
+                    <!-- Malware Content -->
+                    <div id="audit-malware" class="audit-content hidden">
+                        <div class="space-y-3">
+                            <div class="flex items-start space-x-4 p-4 rounded-lg border bg-red-50 border-red-200">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mt-1 text-red-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900 mb-1">Malicious code detected in theme file</h3>
+                                    <p class="text-sm text-gray-600">Suspicious code pattern found in twentytwenty/functions.php that matches known malware signatures.</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 font-medium">Hide</button>
+                                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">Fix It</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 rounded-lg border bg-red-50 border-red-200">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mt-1 text-red-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900 mb-1">Backdoor script detected</h3>
+                                    <p class="text-sm text-gray-600">A backdoor script was found in wp-content/uploads/2024/suspicious.php that allows remote code execution.</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 font-medium">Hide</button>
+                                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">Fix It</button>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4 p-4 rounded-lg border bg-orange-50 border-orange-200">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mt-1 text-orange-600"></i>
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900 mb-1">Suspicious file in plugins directory</h3>
+                                    <p class="text-sm text-gray-600">Unknown file detected: wp-content/plugins/unknown-plugin/shell.php</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-700 font-medium">Hide</button>
+                                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">Fix It</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anti-spam Tab -->
+            <div id="tab-antispam" class="tab-content hidden">
+                <div class="mb-6">
+                    <input type="text" placeholder="Search settings..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Base Options</h2>
+                    <p class="text-sm text-gray-500 mb-6">0 spam comments were blocked by Anti-spam plugin so far.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Anti-spam mode</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Save spam comments</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Display privacy notice</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Protection Modules</h2>
+                    <p class="text-sm text-gray-500 mb-6">Additional modules to spam protect.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Protect Register Form</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Advanced protection of comment forms</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Firewall Tab -->
+            <div id="tab-firewall" class="tab-content hidden">
+                <!-- Firewall Overview -->
+                <div id="firewall-overview" class="firewall-content">
+                    <div class="bg-white rounded-xl border border-gray-200 p-8 mb-6">
+                        <!-- Titan Firewall Activated Header -->
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="check" class="w-7 h-7 text-green-600"></i>
+                            </div>
+                            <h2 class="text-lg font-bold text-gray-900">Titan Firewall Activated</h2>
+                        </div>
+
+                        <!-- Content Section -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-3">Web Application Firewall Status</h3>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm mb-3 bg-white">
+                                    <option>Enabled and Protecting</option>
+                                    <option>Learning Mode</option>
+                                    <option>Disabled</option>
+                                </select>
+                                <p class="text-sm text-gray-600">Actively blocking requests matching known attack patterns and protecting your site from attackers.</p>
+                            </div>
+                            <div class="bg-gray-50 rounded-lg border border-gray-200 p-4">
+                                <h3 class="text-sm font-semibold text-gray-900 mb-3">Protection Level</h3>
+
+                                <div class="flex items-start gap-4 mb-4">
+                                    <!-- Web Application Firewall Progress with Tooltip -->
+                                    <div class="relative firewall-circle-wrapper flex-shrink-0">
+                                        <div class="relative inline-flex items-center justify-center w-20 h-20 cursor-pointer">
+                                            <svg class="w-20 h-20 transform -rotate-90">
+                                                <circle cx="40" cy="40" r="36" stroke="#e5e7eb" stroke-width="6" fill="none" />
+                                                <circle cx="40" cy="40" r="36" stroke="#5D05B7" stroke-width="6" fill="none" stroke-dasharray="226" stroke-dashoffset="158" />
+                                            </svg>
+                                            <div class="absolute inset-0 flex items-center justify-center">
+                                                <span class="text-lg font-bold text-gray-900">30%</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tooltip -->
+                                        <div class="firewall-tooltip">
+                                            <h4 class="font-semibold text-gray-900 mb-2 text-sm">How do I get to 100%?</h4>
+                                            <p class="text-xs text-gray-600 mb-1">30% Enable the Titan Firewall.</p>
+                                            <p class="text-xs text-gray-600 mb-2">70% Optimize the Titan Firewall.</p>
+                                            <a href="#" class="text-xs text-primary hover:underline">How does Titan determine this?</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-1">
+                                        <h4 class="text-sm font-semibold text-gray-900 mb-1">Basic WordPress Protection</h4>
+                                        <p class="text-xs text-gray-600">Stops Complex Attacks</p>
+                                    </div>
+                                </div>
+
+                                <p class="text-xs text-gray-600 mb-3">The plugin loads after WordPress, so some plugins may run vulnerable code before protection activates.</p>
+                                <button onclick="showOptimizeModal()" class="w-full px-4 py-2.5 text-white rounded-lg font-medium btn-primary text-sm">
+                                    Optimize the Titan Firewall
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall Settings -->
+                <div id="firewall-settings" class="firewall-content hidden">
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Base Options</h2>
+                            <p class="text-sm text-gray-500 mb-6">Additional modules to spam protect.</p>
+                            <div class="space-y-4 mb-6">
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-2 block">How does Titan get IP?</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option>Let Titan use the most secure method to get visitor IP addresses. Prevents spoofing and works with most sites. (Recommended)</option>
+                                        <option>Use PHP's built in REMOTE_ADDR and don't use anything else. Very secure if this is compatible with your site</option>
+                                        <option>Use the X-Forwarded-For HTTP header. Only use if you have a front-end proxy or spoofing may result.</option>
+                                        <option>Use the X-Real-IP HTTP header. Only use if you have a front-end proxy or spoofing may result.</option>
+                                        <option>Use Cloudflare "CF-Connecting-IP" HTTP header to get a visitor IP. Only use if you're using Cloudflare.</option>
+                                    </select>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-3 block">Trusted Proxies</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Enter trusted proxy IPs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">These IPs are ignored when determining the request IP</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Advanced Firewall Options</h2>
+                            <p class="text-sm text-gray-500 mb-6">Additional modules to spam protect.</p>
+                            <div class="space-y-4 mb-6">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <span class="font-medium text-gray-900">Delay IP and Country blocking until after WordPress and plugins have loaded (only process firewall rules early)</span>
+                                        <p class="text-xs text-gray-500 mt-1">WordPress IP addresses that are blocked early</p>
+                                    </div>
+                                    <div class="flex space-x-2">
+                                        <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm font-medium">Off</button>
+                                        <button class="px-3 py-1.5 text-white rounded text-sm btn-primary">On</button>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-3 block">Whitelisted IP addresses that bypass all rules</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="4" placeholder="Enter whitelisted IPs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">Whitelisted IPs must be separated by commas or placed on separate lines. You can specify ranges using the following formats: 127.0.0.1/24, 127.0.0.[1-100], or 127.0.0.1-127.0.1.100. Titan automatically whitelists private networks because these are not routable on the public Internet.</p>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                                        Whitelisted services
+                                        <i data-lucide="help-circle" class="w-4 h-4 text-gray-400"></i>
+                                    </label>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded border-gray-300"><span class="text-sm text-gray-700">Sucuri</span></label>
+                                        <label class="flex items-center space-x-2"><input type="checkbox" checked class="rounded border-gray-300"><span class="text-sm text-gray-700">Facebook</span></label>
+                                        <label class="flex items-center space-x-2"><input type="checkbox" class="rounded border-gray-300"><span class="text-sm text-gray-700">Uptime Robot</span></label>
+                                        <label class="flex items-center space-x-2"><input type="checkbox" class="rounded border-gray-300"><span class="text-sm text-gray-700">StatusCake</span></label>
+                                        <label class="flex items-center space-x-2"><input type="checkbox" class="rounded border-gray-300"><span class="text-sm text-gray-700">ManageWP</span></label>
+                                        <label class="flex items-center space-x-2"><input type="checkbox" class="rounded border-gray-300"><span class="text-sm text-gray-700">Seznam Search Engine</span></label>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-3 block">Immediately block IPs that access these URLs</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="4" placeholder="Enter URLs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">Separate multiple URLs with commas or place them on separate lines. Asterisks are wildcards, but use with care. If you see an attacker repeatedly probing your site for a known vulnerability you can use this to immediately block them. All URLs must start with a "/" without quotes and must be relative, e.g. /badURL/one/, /bannedPage.html, /dont-access/this/URL/, /starts/with/*</p>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-3 block">Ignored IP addresses for Titan Web Application Firewall alerting</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="4" placeholder="Enter ignored IPs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">Ignored IPs must be separated by commas or placed on separate lines. These addresses will be ignored from any alerts about increased attacks and can be used to ignore things like standalone website security scanners.</p>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <h3 class="font-semibold text-gray-900 mb-3">Rules</h3>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full">
+                                            <thead class="bg-white border-b border-gray-200">
+                                                <tr>
+                                                    <th class="px-3 py-2 text-left"><input type="checkbox" class="rounded border-gray-300"></th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Category</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100">
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2"><input type="checkbox" checked class="rounded border-gray-300"></td>
+                                                    <td class="px-3 py-2 text-xs text-gray-900">rce</td>
+                                                    <td class="px-3 py-2 text-xs text-gray-700">Duplicator Installer wp-config.php Overwrite</td>
+                                                </tr>
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2"><input type="checkbox" checked class="rounded border-gray-300"></td>
+                                                    <td class="px-3 py-2 text-xs text-gray-900">priv-esc</td>
+                                                    <td class="px-3 py-2 text-xs text-gray-700">User Roles Manager Privilege Escalation <= 4.24</td>
+                                                </tr>
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2"><input type="checkbox" checked class="rounded border-gray-300"></td>
+                                                    <td class="px-3 py-2 text-xs text-gray-900">dos</td>
+                                                    <td class="px-3 py-2 text-xs text-gray-700">WordPress Core <= 4.5.3 - DoS</td>
+                                                </tr>
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2"><input type="checkbox" checked class="rounded border-gray-300"></td>
+                                                    <td class="px-3 py-2 text-xs text-gray-900">privesc</td>
+                                                    <td class="px-3 py-2 text-xs text-gray-700">WordPress Core: Arbitrary File Deletion</td>
+                                                </tr>
+                                                <tr class="hover:bg-gray-50">
+                                                    <td class="px-3 py-2"><input type="checkbox" checked class="rounded border-gray-300"></td>
+                                                    <td class="px-3 py-2 text-xs text-gray-900">privesc</td>
+                                                    <td class="px-3 py-2 text-xs text-gray-700">WordPress <= 5.0 - PHP Object Injection via Meta Data & Authenticated File Delete</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Whitelisted URLs</h2>
+                            <p class="text-sm text-gray-500 mb-6">Additional modules to spam protect.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <div class="mb-4">
+                                        <h3 class="font-medium text-gray-900 mb-2">Add Whitelisted URL/Param</h3>
+                                        <p class="text-xs text-gray-500 mb-3">The URL/parameters in this table will not be tested by the firewall. They are typically added while the firewall is in Learning Mode or by an admin who identifies a particular URL/request as a false positive.</p>
+                                        <div class="grid grid-cols-3 gap-3 mb-3">
+                                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                                                <option>URL</option>
+                                                <option>POST Body</option>
+                                                <option>Param Name</option>
+                                            </select>
+                                            <input type="text" placeholder="Param Name" class="px-3 py-2 border border-gray-300 rounded-lg text-sm col-span-1">
+                                            <button class="px-4 py-2 text-white rounded-lg font-medium btn-primary text-sm">Add</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="flex items-center gap-4 mb-3">
+                                            <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm font-medium">Delete</button>
+                                            <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm font-medium">Enable</button>
+                                            <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm font-medium">Disable</button>
+                                            <div class="flex-1"></div>
+                                            <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                                                <option>URL</option>
+                                            </select>
+                                            <input type="text" placeholder="Filter Value" class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm font-medium">Filter</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full">
+                                            <thead class="bg-white border-b border-gray-200">
+                                                <tr>
+                                                    <th class="px-3 py-2 text-left"><input type="checkbox" class="rounded border-gray-300"></th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Enabled</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">URL</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Param</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Created</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">Source</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">User</th>
+                                                    <th class="px-3 py-2 text-left text-xs font-medium text-gray-700">IP</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="8" class="px-4 py-8 text-center text-sm text-gray-500">No whitelisted URLs yet</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="mt-4 p-3 bg-gray-100 rounded-lg">
+                                        <h4 class="font-medium text-gray-900 mb-2 text-sm">Monitor background requests from an administrator's web browser for false positives</h4>
+                                        <div class="flex gap-4">
+                                            <label class="flex items-center space-x-2">
+                                                <input type="checkbox" class="rounded border-gray-300">
+                                                <span class="text-sm text-gray-700">Front-end Website</span>
+                                            </label>
+                                            <label class="flex items-center space-x-2">
+                                                <input type="checkbox" class="rounded border-gray-300">
+                                                <span class="text-sm text-gray-700">Admin Panel</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Rate Limiting</h2>
+                            <p class="text-sm text-gray-500 mb-6">Additional modules to spam protect.</p>
+                            <div class="space-y-4">
+                                <div class="flex items-center p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex-1">
+                                        <span class="font-medium text-gray-900">Enable Rate Limiting and Advanced Blocking</span>
+                                        <div class="flex space-x-2 mt-2">
+                                            <button class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded text-sm">Off</button>
+                                            <button class="px-3 py-1.5 text-white rounded text-sm font-medium btn-primary">On</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">How should we treat Google's crawlers?</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Verified Google crawlers have unlimited rate limits</option>
+                                            <option>Treat as normal traffic</option>
+                                        </select>
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Crawler action</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                            <option>Throttle</option>
+                                            <option>Block</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <p class="text-xs text-gray-600 mb-2 font-medium">NOTE: This checkbox enables ALL blocking/throttling functions including IP, country and advanced blocking, and the "Rate Limiting Rules" below.</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">If anyone's requests exceed</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex gap-2 items-end">
+                                        <div class="flex-1">
+                                            <label class="text-xs text-gray-600 mb-1 block">then</label>
+                                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                                <option>throttle it</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">If a crawler's page views exceed</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">then</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>throttle it</option>
+                                        </select>
+                                    </div>
+                                    <div></div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">If a crawler's pages not found (404s) exceed</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">then</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>throttle it</option>
+                                        </select>
+                                    </div>
+                                    <div></div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">If a human's page views exceed</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">then</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>throttle it</option>
+                                        </select>
+                                    </div>
+                                    <div></div>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">If a human's pages not found (404s) exceed</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>Unlimited</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-xs text-gray-600 mb-1 block">then</label>
+                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                            <option>throttle it</option>
+                                        </select>
+                                    </div>
+                                    <div></div>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="text-sm font-medium text-gray-700 mb-2 block">How long is an IP address blocked when it breaks a rule</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option>1 minute</option>
+                                        <option>5 minutes</option>
+                                        <option>1 hour</option>
+                                    </select>
+                                </div>
+
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="text-sm font-medium text-gray-700 mb-3 block">Whitelisted 404 URLs</label>
+                                    <p class="text-xs text-gray-500 mb-2">These URL patterns will be excluded from the throttling rules used to limit crawlers.</p>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="4" placeholder="/favicon.ico
+/apple-touch-icon*.png
+/browserconfig.xml"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall Blocking -->
+                <div id="firewall-blocking" class="firewall-content hidden">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-900">Blocking IP</h2>
+                                <p class="text-sm text-gray-500 mt-1">Blocking ip</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <input type="text" placeholder="Filter by Type, Detail, or Reason" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">
+                                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Filter</button>
+                                <button class="px-4 py-2 text-white rounded-lg text-sm font-medium btn-primary">Block IP Address</button>
+                                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Unblock</button>
+                                <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Make Permanent</button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left"><input type="checkbox" class="rounded border-gray-300"></th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Block Type</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Detail</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Rule Added</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Reason</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Expiration</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Block Count</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Last Attempt</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-4 py-3"><input type="checkbox" class="rounded border-gray-300"></td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">IP Block</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">191.168.200.201</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">22.03.2020 22:42</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Yahoo crawler</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Permanent</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">0</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Never</td>
+                                    </tr>
+                                    <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                        <td class="px-4 py-3"><input type="checkbox" class="rounded border-gray-300"></td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">IP Block</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">192.168.200.145</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">22.03.2020 00:42</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Bad bot</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Permanent</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">0</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">Never</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall Attacks Log -->
+                <div id="firewall-attackslog" class="firewall-content hidden">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-2">Attack List</h2>
+                        <p class="text-sm text-gray-500 mb-6">In this table, you can see the attacks on your site that the Titan firewall repelled.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">IP</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Event</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">...</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Attack Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="px-4 py-12 text-center text-gray-500">No attacks recorded yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall Limit Login -->
+                <div id="firewall-limitlogin" class="firewall-content hidden">
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Lockout</h2>
+                            <p class="text-sm text-gray-500 mb-6">Basic recommended security settings.</p>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-900">Bruteforce enabled</span>
+                                    <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <span class="font-medium text-gray-900">GDPR compliance</span>
+                                    <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Allowed retries</label>
+                                        <input type="number" value="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Minutes lockout</label>
+                                        <input type="number" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                    </div>
+                                    <div class="p-4 bg-gray-50 rounded-lg">
+                                        <label class="text-sm font-medium text-gray-700 mb-2 block">Hours until retries are reset</label>
+                                        <input type="number" value="12" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Whitelist</h2>
+                            <p class="text-sm text-gray-500 mb-6">Basic recommended security settings.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-2 block">Whitelist IPs</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="3" placeholder="Enter IPs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">One IP or IP range (1.2.3.4-5.6.7.8) per line</p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-2 block">Whitelist usernames</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="3" placeholder="Enter usernames..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">One Username per line</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl border border-gray-200 p-6">
+                            <h2 class="text-lg font-semibold text-gray-900 mb-2">Blacklist</h2>
+                            <p class="text-sm text-gray-500 mb-6">Basic recommended security settings.</p>
+                            <div class="space-y-4">
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-2 block">Blacklist IPs</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="3" placeholder="Enter IPs..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">One IP or IP range (1.2.3.4-5.6.7.8) per line</p>
+                                </div>
+                                <div class="p-4 bg-gray-50 rounded-lg">
+                                    <label class="font-medium text-gray-900 mb-2 block">Blacklist usernames</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="3" placeholder="Enter usernames..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-2">One Username per line</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Firewall Login Log -->
+                <div id="firewall-loginlog" class="firewall-content hidden">
+                    <div class="bg-white rounded-xl border border-gray-200 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-2">Login Attempts</h2>
+                        <p class="text-sm text-gray-500 mb-6">In this table, you can see the attacks on your site that the Titan firewall repelled.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">IP</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Tried to log in as</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Gateway</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="px-4 py-12 text-center text-gray-500">No login attempts recorded yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Two-Factor Auth Tab -->
+            <div id="tab-twofactor" class="tab-content hidden">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <div class="grid grid-cols-3 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold">1</div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Get the App</h3>
+                            <p class="text-sm text-gray-600 mb-3">Download 2FA Auth app to your smartphone to start using tokens</p>
+                            <div class="flex justify-center space-x-2">
+                                <div class="px-3 py-2 bg-gray-900 text-white rounded text-xs">Google Play</div>
+                                <div class="px-3 py-2 bg-gray-900 text-white rounded text-xs">App Store</div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold">2</div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Scan QR Code</h3>
+                            <p class="text-sm text-gray-600">Please, scan the following QR code with your app</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-3 font-bold">3</div>
+                            <h3 class="font-semibold text-gray-900 mb-2">Enter Token</h3>
+                            <p class="text-sm text-gray-600">Enter the 6-digit token generated by the app and enable TOTP protection</p>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-200 pt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">2FA Activation</h3>
+                        <div class="bg-gray-50 rounded-lg p-6 mb-6 text-center">
+                            <div class="w-48 h-48 bg-white border-2 border-gray-300 rounded-lg mx-auto mb-4 flex items-center justify-center">
+                                <span class="text-gray-400">QR Code</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">Scan QR code with your app</p>
+                            <div class="flex justify-center items-center space-x-2">
+                                <input type="text" placeholder="Enter code" class="w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <button class="px-4 py-2 text-white rounded-lg text-sm font-medium btn-primary">Send Auth Code</button>
+                            </div>
+                            <button class="mt-3 text-sm font-medium text-primary">Refresh</button>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Users</h3>
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Username</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Two-Factor Enabled?</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-gray-100">
+                                        <td class="px-4 py-3 text-sm text-gray-900">kush</td>
+                                        <td class="px-4 py-3 text-sm text-gray-600">No</td>
+                                        <td class="px-4 py-3">
+                                            <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-primary">Enable</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Tab -->
+            <div id="tab-backup" class="tab-content hidden">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Backup Management</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Schedule</label>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm text-white btn-primary">Manually</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Every 2 hours</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Every 8 hours</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Everyday</button>
+                            </div>
+                            <label class="flex items-center space-x-2 mt-3">
+                                <input type="checkbox" class="rounded border-gray-300">
+                                <span class="text-sm text-gray-600">Remove old archives (older than 7 days)</span>
+                            </label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Archiving Speed</label>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm text-white btn-primary">Slow</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Fast</button>
+                            </div>
+                            <div class="mt-3 flex items-center space-x-3">
+                                <label class="text-sm text-gray-600">Custom speed:</label>
+                                <input type="number" value="1200" class="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                <span class="text-sm text-gray-600">files per minute</span>
+                            </div>
+                            <button class="mt-3 px-4 py-2 text-white rounded-lg text-sm font-medium btn-primary">Save</button>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Storage</label>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm text-white btn-primary">Local</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">FTP</button>
+                                <button class="px-4 py-2 rounded-lg font-medium text-sm bg-gray-100 text-gray-700 hover:bg-gray-200">Dropbox</button>
+                            </div>
+                        </div>
+                        <div>
+                            <button class="px-5 py-2 text-white rounded-lg font-medium btn-primary">Create New Backup</button>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-700 mb-3">Backup History</h3>
+                            <table class="w-full">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Backup Date</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Size</th>
+                                        <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Current Storage</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" class="px-4 py-8 text-center text-gray-500">No backups created yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Site Checker Tab -->
+            <div id="tab-sitechecker" class="tab-content hidden">
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <div class="flex items-center space-x-2 text-red-700">
+                        <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                        <span class="font-medium">HTTPS is not activated on this site.</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900">Push Notifications</h2>
+                            <p class="text-sm text-gray-500 mt-1">Get real-time alerts about site availability issues</p>
+                        </div>
+                        <button class="px-5 py-2 text-white rounded-lg font-medium btn-primary">Subscribe</button>
+                    </div>
+                    <p class="text-sm text-red-600">Your site must work on HTTPS to subscribe to notifications</p>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Site Checker</h2>
+                    <p class="text-sm text-gray-500 mb-6">Monitor URLs and manage them: add, delete</p>
+                    <div class="mb-4">
+                        <div class="flex space-x-2">
+                            <input type="text" placeholder="URL" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg">
+                            <button class="px-5 py-2 text-white rounded-lg font-medium btn-primary">Add</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">URL</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Frequency</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Uptime</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Response Time</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Next Check</th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">No URLs added yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Tweaks Tab -->
+            <div id="tab-tweaks" class="tab-content hidden">
+                <div class="mb-6">
+                    <input type="text" placeholder="Search settings..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Base Settings</h2>
+                    <p class="text-sm text-gray-500 mb-6">Basic recommended security settings.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Strong Password Requirement</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Hide author login</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Hide errors when logging into the site</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Disable XML-RPC</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Hide WordPress Versions</h2>
+                    <p class="text-sm text-gray-500 mb-6">WordPress itself and many plugins shows their version at the public area of your site. An attacker received this information may be aware of the vulnerabilities found in the version of the WordPress core or plugins.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-900">Remove html comments</span>
+                                <span class="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Recommended</span>
+                            </div>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-900">Remove meta generator</span>
+                                <span class="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Recommended</span>
+                            </div>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-900">Remove Version from Script</span>
+                                <span class="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Recommended</span>
+                            </div>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-medium text-gray-900">Remove Version from Stylesheet</span>
+                                <span class="ml-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">Recommended</span>
+                            </div>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <label class="block font-medium text-gray-900 mb-2">Exclude stylesheet/script file names</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="3" placeholder="Enter file names to exclude..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Log Tab -->
+            <div id="tab-errorlog" class="tab-content hidden">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900">Error Log</h2>
+                            <p class="text-sm text-gray-500 mt-1">Track errors to help solve possible issues</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium text-sm flex items-center space-x-2">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span>Export</span>
+                            </button>
+                            <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium text-sm">Clean-up Log (1 KB)</button>
+                        </div>
+                    </div>
+                    <div class="bg-gray-100 rounded-lg p-4 font-mono text-xs text-gray-800 overflow-auto max-h-96">
+                        <div class="space-y-1">
+                            <div>28-11-2025 22:23:34.1764368614.8441 [127.0.0.1] [69220] <span class="text-green-600 font-semibold">[INFO]</span> Plugin starts activation [START].</div>
+                            <div class="ml-8">-Plugin Version in DB: 0</div>
+                            <div class="ml-8">-Current Plugin Version: 7.4.0</div>
+                            <div>28-11-2025 22:23:43.1764368623.5279 [127.0.0.1] [69220] <span class="text-green-600 font-semibold">[INFO]</span> Plugin starts deactivate [START].</div>
+                            <div>28-11-2025 22:23:43.1764368623.5279 [127.0.0.1] [69220] <span class="text-green-600 font-semibold">[INFO]</span> Plugin has been deactivated [END]!</div>
+                            <div>28-11-2025 22:34:25.1764369265.8884 [127.0.0.1] [69225] <span class="text-green-600 font-semibold">[INFO]</span> Plugin starts activation [START].</div>
+                            <div class="ml-8">-Plugin Version in DB: 7.4.0</div>
+                            <div class="ml-8">-Current Plugin Version: 7.4.0</div>
+                            <div>11-01-2026 22:05:08.1768169108.2068 [127.0.0.1] [69641e] <span class="text-green-600 font-semibold">[INFO]</span> Plugin starts deactivate [START].</div>
+                            <div>11-01-2026 22:05:08.1768169108.2068 [127.0.0.1] [69641e] <span class="text-green-600 font-semibold">[INFO]</span> Plugin has been deactivated [END]!</div>
+                            <div>20-01-2026 09:36:48.1768981808.4483 [127.0.0.1] [69674c] <span class="text-green-600 font-semibold">[INFO]</span> Plugin starts activation [START].</div>
+                            <div class="ml-8">-Plugin Version in DB: 7.4.0</div>
+                            <div class="ml-8">-Current Plugin Version: 7.4.0</div>
+                            <div>20-01-2026 09:43:19.1768982199.6693 [127.0.0.1] [69674e] <span class="text-green-600 font-semibold">[INFO]</span> Titan Premium plugin starts activation [START].</div>
+                            <div>20-01-2026 09:43:19.1768982199.7146 [127.0.0.1] [69674e] <span class="text-green-600 font-semibold">[INFO]</span> Titan Premium plugin has been activated [END]!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="tab-settings" class="tab-content hidden">
+                <div class="mb-6">
+                    <input type="text" placeholder="Search settings..." class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Advanced Settings</h2>
+                    <p class="text-sm text-gray-500 mb-6">Configure advanced plugin options</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Plugin menu in adminbar</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch active"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="font-medium text-gray-900">Complete Uninstall</span>
+                            <button onclick="toggleSwitch(this)" class="toggle-switch inactive"><span class="toggle-knob"></span></button>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <label class="block font-medium text-gray-900 mb-2">How does Titan get IP?</label>
+                            <input type="text" value="Let Titan use the most secure method to get visitor IP address" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Antivirus Settings</h2>
+                    <p class="text-sm text-gray-500 mb-6">Configure antivirus scanning options</p>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Scanning Type</label>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Basic scan</option>
+                                <option>Advanced scan</option>
+                            </select>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Scanning Speed</label>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Free</option>
+                                <option>Slow</option>
+                                <option>Medium</option>
+                                <option>Fast</option>
+                            </select>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Schedule Scan</label>
+                            <select class="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm">
+                                <option>Disabled</option>
+                                <option>Daily</option>
+                                <option>Weekly</option>
+                                <option>Custom</option>
+                            </select>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg col-span-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Digest on E-mail</label>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium">Enable</button>
+                                <button class="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium">Disable</button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-2">You can get a weekly digest on threats found</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-2">Import/Export</h2>
+                    <p class="text-sm text-gray-500 mb-6">Backup or restore your plugin settings</p>
+                    <div class="p-4 bg-gray-50 rounded-lg mb-4">
+                        <h3 class="font-medium text-gray-900 mb-2">Export Settings</h3>
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono" rows="4" readonly>{"titan_antispam_mode":"0","titan_bruteforce_allowed_retries":"4"...}</textarea>
+                        <button class="mt-3 px-4 py-2 text-white rounded-lg text-sm font-medium flex items-center space-x-2 btn-primary">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                            <span>Export Options</span>
+                        </button>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-medium text-gray-900 mb-2">Import Settings</h3>
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs font-mono" rows="4" placeholder="Paste your settings JSON here..."></textarea>
+                        <button class="mt-3 px-4 py-2 text-white rounded-lg text-sm font-medium flex items-center space-x-2 btn-secondary">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Import Options</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- License Tab -->
+            <div id="tab-license" class="tab-content hidden">
+                <div class="bg-white rounded-xl border border-gray-200 p-6">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="check-circle" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-semibold text-gray-900">Product Activation</h2>
+                            <p class="text-sm text-gray-600">License is active</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">License Key</label>
+                            <input type="text" value="XXXX-XXXX-XXXX-XXXX" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">License Type</label>
+                            <input type="text" value="Premium License" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Expires</label>
+                            <input type="text" value="January 21, 2027" readonly class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                <span class="text-sm font-medium text-green-700">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button class="px-5 py-2 btn-primary text-white rounded-lg font-medium">Deactivate License</button>
+                        
+                    </div>
+                    <div class="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <h3 class="font-medium text-blue-900 mb-2">License Benefits</h3>
+                        <ul class="space-y-2 text-sm text-blue-800">
+                            <li class="flex items-center space-x-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                <span>Priority support</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                <span>Automatic updates</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                <span>Access to premium features</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <i data-lucide="check-circle" class="w-4 h-4 text-blue-600"></i>
+                                <span>Advanced security modules</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optimize Firewall Modal -->
+    <div id="optimize-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="bg-gray-800 text-white px-6 py-4 rounded-t-xl flex items-center justify-between">
+                <h2 class="text-xl font-semibold">Uninstall Titan Firewall</h2>
+                <button onclick="hideOptimizeModal()" class="text-white hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-700 mb-4">
+                    To make your site as secure as possible, the Titan Web Application Firewall is designed to run via a PHP setting called
+                    <code class="bg-gray-100 px-2 py-1 rounded text-sm">auto_prepend_file</code>, which ensures it runs before any potentially vulnerable code runs. This PHP setting is currently in use, and is including this file:
+                </p>
+                <div class="bg-gray-100 p-3 rounded-lg mb-4 font-mono text-sm overflow-x-auto">
+                    /Applications/Local.app/Contents/Resources/extraResources/local-bootstrap.php
+                </div>
+                <p class="text-gray-700 mb-4">
+                    If you don't recognize this file, please
+                    <a href="#" class="text-blue-600 hover:underline">contact us on the WordPress support forums</a>
+                    before proceeding.
+                </p>
+                <p class="text-gray-700 mb-4">
+                    You can proceed with the installation and we will include this from within our
+                    <code class="bg-gray-100 px-2 py-1 rounded text-sm">titan-firewall.php</code>
+                    file which should maintain compatibility with your site, or you can opt to override the existing PHP setting.
+                </p>
+                <div class="flex space-x-3 mb-6">
+                    <button class="px-3 py-1.5 text-white rounded-lg text-sm font-medium btn-secondary">INCLUDE</button>
+                    <button class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium">OVERRIDE</button>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-gray-800">
+                        <strong>NOTE:</strong> If you have separate WordPress installations with Titan installed within a subdirectory of this site, it is recommended that you perform the Firewall installation procedure on those sites before this one.
+                    </p>
+                </div>
+                <p class="text-gray-700 mb-4">
+                    We've preselected your server configuration based on our tests, but if you know your web server's configuration, please select it now. You can also choose "Manual Configuration" for alternate installation details.
+                </p>
+                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6">
+                    <option>Apache + mod_php</option>
+                    <option>Apache + suPHP</option>
+                    <option>Apache + CGI/FastCGI (recommended based on our tests)</option>
+                    <option>LiteSpeed/lsapi</option>
+                    <option>NGINX</option>
+                    <option>Windows (IIS)</option>
+                    <option>Manual Configuration</option>
+                </select>
+                <p class="text-gray-700 mb-4">
+                    Please download a backup of the following files before we make the necessary changes:
+                </p>
+                <div class="space-y-2 mb-6">
+                    <button class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm font-medium">Download .htaccess</button>
+                    <br>
+                    <button class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 text-sm font-medium">Download .user.ini</button>
+                </div>
+                <p class="text-gray-700 mb-6">
+                    Once you have downloaded the files, click Continue to complete the setup.
+                </p>
+                <div class="flex space-x-3">
+                    <button class="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium">CONTINUE</button>
+                    <button onclick="hideOptimizeModal()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium">CANCEL</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Toggle switch function
+        function toggleSwitch(btn) {
+            if (btn.classList.contains('active')) {
+                btn.classList.remove('active');
+                btn.classList.add('inactive');
+            } else {
+                btn.classList.remove('inactive');
+                btn.classList.add('active');
+            }
+        }
+
+        // Switch main tab
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected tab content
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            // Update sidebar buttons
+            document.querySelectorAll('.sidebar-btn').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-gray-700', 'hover:bg-gray-50');
+            });
+            
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-gray-700', 'hover:bg-gray-50');
+            }
+            
+            // Show/hide firewall submenu
+            const firewallSubmenu = document.getElementById('firewall-submenu');
+            if (tabId === 'firewall') {
+                firewallSubmenu.classList.remove('hidden');
+            } else {
+                firewallSubmenu.classList.add('hidden');
+            }
+            
+            // Reinitialize icons
+            lucide.createIcons();
+        }
+
+        // Switch firewall sub-page
+        function switchFirewallSubPage(subPageId) {
+            // Hide all firewall content
+            document.querySelectorAll('.firewall-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected firewall content
+            document.getElementById('firewall-' + subPageId).classList.remove('hidden');
+            
+            // Update sub-page buttons
+            document.querySelectorAll('.firewall-sub-btn').forEach(btn => {
+                btn.classList.remove('subtab-active');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-50');
+            });
+            
+            const activeBtn = document.querySelector(`[data-subpage="${subPageId}"]`);
+            if (activeBtn) {
+                activeBtn.classList.add('subtab-active');
+                activeBtn.classList.remove('text-gray-600', 'hover:bg-gray-50');
+            }
+            
+            // Reinitialize icons
+            lucide.createIcons();
+        }
+
+        // Switch audit tab
+        function switchAuditTab(auditId) {
+            // Hide all audit content
+            document.querySelectorAll('.audit-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Show selected audit content
+            document.getElementById('audit-' + auditId).classList.remove('hidden');
+            
+            // Update audit tab buttons
+            document.querySelectorAll('.audit-tab').forEach(tab => {
+                tab.classList.remove('audit-tab-active');
+                tab.classList.add('border-transparent', 'text-gray-600');
+            });
+            
+            const activeTab = document.querySelector(`[data-audit="${auditId}"]`);
+            if (activeTab) {
+                activeTab.classList.add('audit-tab-active');
+                activeTab.classList.remove('border-transparent', 'text-gray-600');
+            }
+            
+            // Reinitialize icons
+            lucide.createIcons();
+        }
+
+        // Show optimize modal
+        function showOptimizeModal() {
+            document.getElementById('optimize-modal').classList.remove('hidden');
+        }
+
+        // Hide optimize modal
+        function hideOptimizeModal() {
+            document.getElementById('optimize-modal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('optimize-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideOptimizeModal();
+            }
+        });
+    </script>
+</body>
+</html>
